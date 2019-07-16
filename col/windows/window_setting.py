@@ -37,8 +37,6 @@ class WindowOption(QWidget):
                                     font-family: MonoxRegular;\
                                     font-size: 20px;}"
 
-
-
         layout_main = QHBoxLayout(spacing=0)
         layout_main.setContentsMargins(0, 0, 0, 0)
 
@@ -61,14 +59,14 @@ class WindowOption(QWidget):
 
         item = QListWidgetItem()
         item.setFont(font)
-        item.setText('Lite')
+        item.setText('DIY')
         item.setSizeHint(QSize(0, 60))
         item.setTextAlignment(Qt.AlignCenter)
         self.list_option.addItem(item)
 
         item = QListWidgetItem()
         item.setFont(font)
-        item.setText('Pro')
+        item.setText('PRO')
         item.setSizeHint(QSize(0, 60))
         item.setTextAlignment(Qt.AlignCenter)
         self.list_option.addItem(item)
@@ -191,8 +189,6 @@ class WindowOption(QWidget):
         self.tab0_page0.setLayout(layout_tab0_page0_global)
 
         """# Page0 Tab1"""
-
-
 
         """# Page0 Global"""
         self.pushbutton_ok_page0 = QPushButton('&Ok')
@@ -542,6 +538,7 @@ class WindowOption(QWidget):
         self.page1.setLayout(layout_page1_global)
 
         self.stack_window.addWidget(self.page1)
+
 
 
 

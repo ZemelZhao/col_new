@@ -3,6 +3,7 @@
 import sys
 import os
 import configparser
+from PyQt5.QtCore import Qt
 try:
     myFolder = os.path.split(os.path.realpath(__file__))[0]
     sys.path.append(os.path.join(myFolder, os.path.pardir))
@@ -33,6 +34,46 @@ class WindowOptionLogic(WindowOption):
         self.log = log
         super(WindowOptionLogic, self).__init__()
         self.judge_close = True
+
+    def keyReleaseEvent(self, event):
+        """DocString for pressKeyEwent"""
+        #@todo: to be defined.
+        if event.key() == Qt.Key_D:
+            self.list_option.setCurrentRow(0)
+            self.stack_window.setCurrentIndex(0)
+
+        if event.key() == Qt.Key_P:
+            self.list_option.setCurrentRow(1)
+            self.stack_window.setCurrentIndex(1)
+
+        if event.key() == Qt.Key_O:
+            if self.stack_window.currentIndex() == 1:
+                self.tabwidget_page1.setCurrentIndex(1)
+            else:
+                self.tabwidget_page0.setCurrentIndex(1)
+
+        if event.key() == Qt.Key_I:
+            if self.stack_window.currentIndex() == 1:
+                self.tabwidget_page1.setCurrentIndex(0)
+            else:
+                self.tabwidget_page0.setCurrentIndex(0)
+
+        if event.key() == Qt.Key_Return:
+            if self.stack_window.currentIndex() == 1:
+                self.action_pushbutton_ok_page1()
+            else:
+                self.action_pushbutton_ok_page0()
+
+        if event.key() == Qt.Key_R:
+            if self.stack_window.currentIndex() == 1:
+                self.action_pushbutton_re_page1()
+            else:
+                self.action_pushbutton_re_page0()
+
+        if event.key() == Qt.Key_Q:
+            self.close()
+
+
 
     def show(self, *arg, **kwarg):
         """DocString for show"""

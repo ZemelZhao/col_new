@@ -83,7 +83,6 @@ class MainWindow(WindowMain):
         if event.key() == Qt.Key_O:
             self.main_option()
 
-        judge = True
         if event.key() == Qt.Key_Q:
             if QApplication.keyboardModifiers() == Qt.ControlModifier:
                 self.close()
@@ -92,10 +91,10 @@ class MainWindow(WindowMain):
                     if not self.window_graph_show.isClosed():
                         self.window_graph_show.close()
                         self.mdi.close()
-                        judge = False
                 except:
                     print('fuck')
-                    pass
+        if event.key() == Qt.Key_A:
+            self.start_analysis()
 
 
     def initial_setting(self):
