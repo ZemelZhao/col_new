@@ -34,19 +34,19 @@ class WindowGraphShowLogic(WindowGraphShow):
         self.log = log
         self.data_per_line = self.gui_val.gui_show_num_all
         self.parent = parent
-        self.judge_close = True
         self.shared_data_graph = shared_data_graph
         self.timer_graph  = QTimer()
         self.timer_lcd = QTimer()
+        self.judge_close = True
         self.timer_graph.timeout.connect(self.update_graph)
         self.timer_lcd.timeout.connect(self.update_lcd)
         self.lcd_shown = False
         super(WindowGraphShowLogic, self).__init__()
 
     def show(self, *arg, **kwarg):
-        self.judge_close = False
         super(WindowGraphShowLogic, self).show(*arg, **kwarg)
-        self.log.info(self, 'Open Window')
+        self.judge_close = False
+        self.log.debug(self, 'Open Window')
 
     def initUI(self):
         super(WindowGraphShowLogic, self).initUI()
@@ -69,10 +69,10 @@ class WindowGraphShowLogic(WindowGraphShow):
         return self.judge_close
 
     def closeEvent(self, e):
-        self.judge_close = True
         self.stopTimer()
         super(WindowGraphShow, self).closeEvent(e)
-        self.log.info(self, 'Close Window')
+        self.judge_close = True
+        self.log.debug(self, 'Close Window')
 
     def graph_save(self):
         self.signal_pic_save.emit(True)

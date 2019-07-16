@@ -32,7 +32,27 @@ class WindowOptionLogic(WindowOption):
         self.conf = conf
         self.log = log
         super(WindowOptionLogic, self).__init__()
-        self.log.info(self, 'Open Window')
+        self.judge_close = True
+
+    def show(self, *arg, **kwarg):
+        """DocString for show"""
+        #@todo: to be defined.
+        super(WindowOptionLogic, self).show(*arg, **kwarg)
+        self.judge_close = False
+        self.log.debug(self, 'Open Window')
+
+    def closeEvent(self, *arg, **kwarg):
+        """DocString for closeEvent"""
+        #@todo: to be defined.
+        super(WindowOptionLogic, self).closeEvent(*arg, **kwarg)
+        self.judge_close = True
+        self.log.debug(self, 'Close Window')
+
+    def isClosed(self):
+        """DocString for isClosed"""
+        #@todo: to be defined.
+
+        return self.judge_close
 
     def initUI(self):
         super(WindowOptionLogic, self).initUI()

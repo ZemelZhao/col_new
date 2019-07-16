@@ -3,8 +3,8 @@
 import sys
 import os
 import multiprocessing as mp
-from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot, QTimer
-from PyQt5.QtWidgets import QMessageBox, QMdiSubWindow
+from PyQt5.QtCore import Qt, QObject, pyqtSignal, pyqtSlot, QTimer
+from PyQt5.QtWidgets import QMessageBox, QMdiSubWindow, QMdiArea
 from PyQt5.QtGui import QCloseEvent
 try:
     from windows.window_main import WindowMain
@@ -54,13 +54,49 @@ class MainWindow(WindowMain):
         self.timer_stat_monit.timeout.connect(self.show_warning)
         self.timer_clear_status.timeout.connect(self.slot_status_bar_clear)
         self.timer_stat_monit.start(1000)
-        self.start_or_not = False
+        self.start = False
 
         self.timer_tcp_monit = QTimer()
         self.timer_tcp_monit.timeout.connect(self.tcp_ip_monit)
         self.timer_tcp_monit.start(1000)
 
         self.started = False
+
+    def keyPressEvent(self, event):
+        """DocString for KeyPressEvent"""
+        #@todo: to be defined.
+        if event.key() == Qt.Key_T:
+            self.slot_make_trigger()
+        if event.key() == Qt.Key_S:
+            if QApplication.keyboardModifiers() == Qt.ControlModifier:
+                self.file_save()
+            else:
+                self.start_restart()
+        if event.key() == Qt.Key_G:
+            try:
+                if self.window_graph_show.isClosed():
+                    self.graph_show()
+                else:
+                    self.pic_save()
+            except:
+                self.graph_show()
+        if event.key() == Qt.Key_O:
+            self.main_option()
+
+        judge = True
+        if event.key() == Qt.Key_Q:
+            if QApplication.keyboardModifiers() == Qt.ControlModifier:
+                self.close()
+            else:
+                try:
+                    if not self.window_graph_show.isClosed():
+                        self.window_graph_show.close()
+                        self.mdi.close()
+                        judge = False
+                except:
+                    print('fuck')
+                    pass
+
 
     def initial_setting(self):
         self.slot_refresh_config()
@@ -69,11 +105,12 @@ class MainWindow(WindowMain):
         self.signal_state.emit(item)
 
     def main_option(self):
-        if not self.start_or_not:
+        if not self.start:
             self.window_main_option = WindowOptionLogic(self.conf, self.log, self)
-            self.signal_state.connect(self.window_main_option.close)
-            self.window_main_option.pushbutton_ok_page1.clicked.connect(self.slot_refresh_config)
-            self.window_main_option.show()
+            if self.window_main_option.isClosed():
+                self.signal_state.connect(self.window_main_option.close)
+                self.window_main_option.pushbutton_ok_page1.clicked.connect(self.slot_refresh_config)
+                self.window_main_option.show()
 
     def graph_show(self):
         try:
@@ -89,6 +126,8 @@ class MainWindow(WindowMain):
                 self.window_graph_show.startTimer(0)
                 sub = QMdiSubWindow()
                 sub.setWidget(self.window_graph_show)
+                self.mdi = QMdiArea()
+                self.setCentralWidget(self.mdi)
                 self.mdi.addSubWindow(sub)
                 self.signal_config_refresh.connect(self.window_graph_show.update_config)
                 self.signal_start_refresh.connect(self.window_graph_show.update_lcd)
@@ -131,7 +170,7 @@ class MainWindow(WindowMain):
     def start_restart(self):
         """DocString for start_restart"""
         #@todo: to be defined.
-        self.start_or_not = True
+        self.start = True
         self.slot_status_bar_changed('Start Record Data')
         self.window_graph_show.startTimer(1)
         self.signal_start_refresh.emit(True)
@@ -145,9 +184,10 @@ class MainWindow(WindowMain):
             self.signal_data_process.emit(1)
 
     def start_analysis(self):
-        self.slot_status_bar_changed('Here')
+        self.slot_status_bar_changed('Waiting...')
+        self.file_save()
 
-    def slot_make_trigger(self, e):
+    def slot_make_trigger(self):
         """DocString for make_trigger"""
         #@todo: to be defined.
         self.signal_data_process.emit(4)
@@ -234,13 +274,14 @@ class MainCom(QObject, mp.Process):
             freq_sample = int(dict_conf['Filter']['sampling_freq'])
             num_bag = self.cal_tcp_ip_bag(freq_sample, channel_num)
             address = (dict_conf['Socket']['tcp_address'], int(dict_conf['Socket']['tcp_port']))
-            upload_config = self.cal.change_status(test=True, hardware_filter=False, command_default=True)
+            upload_config = self.cal.change_status(test=False, hardware_filter=False, command_default=True)
             cache_max_length = 5*channel_num*show_freq*self.data_show_second
             cache_min_length = channel_num*show_freq*self.data_show_second
             self.cache_data = np.array(cache_min_length*[0])
             iter_list = np.linspace(0, show_freq*self.data_show_second-1, self.data_per_line, dtype=np.int)
             iter_send = self.iter_send
             num_show = channel_num * self.data_per_line
+            self.temp_file.truncate()
             if self.new:
                 self.new = False
             else:
@@ -302,20 +343,24 @@ class MainCom(QObject, mp.Process):
     def make_file_save(self):
         """DocString for make_file_save"""
         #@todo: to be defined.
-        dict_config = self.conf.config_read()
-        file_type = int(dict_config['Data']['filetype_save'])
-        self.temp_file.seek(0)
-        data = self.temp_file.read()
-        file_save = FileSave(self.conf, self.log)
-        file_path = os.path.split(os.path.realpath(__file__))[0]
-        res = file_save.run(data, f=False)
-        if file_type:
-            path_file_save = os.path.join(file_path, 'save', '%s.npy' % self.save_name)
-            np.save(path_file_save, res)
-        else:
-            path_file_save = os.path.join(file_path, 'save', '%s.csv' % self.save_name)
-            np.savetxt(path_file_save, res, delimiter=',')
-            pass
+        try:
+            dict_config = self.conf.config_read()
+            file_type = int(dict_config['Data']['filetype_save'])
+            self.temp_file.seek(0)
+            data = self.temp_file.read()
+            file_save = FileSave(self.conf, self.log)
+            file_path = os.path.split(os.path.realpath(__file__))[0]
+            res = file_save.run(data, f=False)
+            if file_type:
+                path_file_save = os.path.join(file_path, 'save', '%s.npy' % self.save_name)
+                np.save(path_file_save, res)
+            else:
+                path_file_save = os.path.join(file_path, 'save', '%s.csv' % self.save_name)
+                np.savetxt(path_file_save, res, delimiter=',')
+                pass
+            print('Data Saved Successfully')
+        except:
+            print('Data Save Failed')
 
     def find_start_flag(self, data):
         """DocString for find_start_flag"""

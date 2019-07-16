@@ -8,6 +8,7 @@ from PyQt5.QtWidgets import (QWidget, QListWidget, QStackedWidget, QHBoxLayout,
                              QGroupBox, QComboBox, QCheckBox, QSpinBox,
                              QGridLayout, QLCDNumber, QMainWindow, QAction,
                              QMessageBox, QMdiArea, QMdiSubWindow, QStatusBar)
+from PyQt5.QtWidgets import QApplication
 import os
 import sys
 myFolder = os.path.split(os.path.realpath(__file__))[0]
@@ -36,8 +37,27 @@ class WindowMain(QMainWindow):
         self.window_prog_help = WindowHelp()
         self.initUI()
 
+    def keyPressEvent(self,event):
+        """DocString for keyPressEvent"""
+        #@todo: to be defined.
+		#:event: @todo.
+        if event.key() == Qt.Key_T:
+            self.slot_make_trigger()
+        if event.key() == Qt.Key_S:
+            if QApplication.keyboardModifiers() == Qt.ControlModifier:
+                self.file_save()
+            else:
+                self.start_restart()
+        if event.key() == Qt.Key_G:
+            if QApplication.keyboardModifiers() == Qt.ControlModifier:
+                self.pic_save()
+            else:
+                self.graph_show()
+        if event.key() == Qt.Key_O:
+            self.main_option()
+
     def initUI(self):
-        self.resize(1100, 900)
+        self.resize(1000, 900)
         self.setWindowTitle('Main')
         myFolder = os.path.split(os.path.realpath(__file__))[0]
         self.path_resource = os.path.join(myFolder, os.pardir, 'resource')
@@ -88,19 +108,18 @@ class WindowMain(QMainWindow):
         self.toolbar_tinker.addAction(self.action_help)
         self.toolbar_tinker.addAction(self.action_about)
 
-        self.mdi = QMdiArea()
-        self.setCentralWidget(self.mdi)
-
         self.statusBar().showMessage('Thanks to use Col')
 
     def main_option(self):
         self.window_main_option.show()
 
     def graph_show(self):
-        sub = QMdiSubWindow()
-        sub.setWidget(self.window_graph_show)
-        sub.setFixedSize(1000, 800)
-        self.mdi.addSubWindow(sub)
+        self.mdi = QMdiArea()
+        self.setCentralWidget(self.mdi)
+        self.sub_mdi = QMdiSubWindow()
+        self.sub_mdi.setWidget(self.window_graph_show)
+        self.sub_mdi.setFixedSize(1000, 800)
+        self.mdi.addSubWindow(self.sub_mdi)
         self.window_graph_show.show()
 
     def prog_about(self):
@@ -153,7 +172,6 @@ class WindowMain(QMainWindow):
 
 if __name__ == '__main__':
     import sys
-    from PyQt5.QtWidgets import QApplication
     app = QApplication(sys.argv)
     win = WindowMain()
     win.show()

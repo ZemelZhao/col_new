@@ -50,41 +50,33 @@ class WindowGraphShow(QWidget):
         self.lcdnumber_countdown.setDigitCount(4)
         self.lcdnumber_countdown.setMode(QLCDNumber.Dec)
         self.lcdnumber_countdown.setSegmentStyle(QLCDNumber.Flat)
-        self.lcdnumber_countdown.setStyleSheet("""
-                                               QLCDNumber{
-                                               min-width: 150px;
-                                               max-width: 150px;
-                                               min-height: 80px;
-                                               max-height: 80px;
-                                               }
-                                               """)
+        self.lcdnumber_countdown.setStyleSheet("QLCDNumber{\
+                                               min-width: 150px;\
+                                               max-width: 150px;\
+                                               min-height: 80px;\
+                                               max-height: 80px;\
+                                               }")
         self.lcdnumber_countdown_num = QLCDNumber()
         self.lcdnumber_countdown_num.setDigitCount(4)
         self.lcdnumber_countdown_num.setMode(QLCDNumber.Dec)
         self.lcdnumber_countdown_num.setSegmentStyle(QLCDNumber.Flat)
-        self.lcdnumber_countdown_num.setStyleSheet("""
-                                               QLCDNumber{
-                                               min-width: 150px;
-                                               max-width: 150px;
-                                               min-height: 80px;
-                                               max-height: 80px;
-                                               }
-                                               """)
+        self.lcdnumber_countdown_num.setStyleSheet("QLCDNumber{\
+                                               min-width: 150px;\
+                                               max-width: 150px;\
+                                               min-height: 80px;\
+                                               max-height: 80px;\
+                                               }")
         self.pushbutton_graph_save = QPushButton("Save Picture")
-        self.pushbutton_graph_save.setStyleSheet("""
-                                                 QPushButton{
-                                                 min-width: 150px;
-                                                 min-height: 60px;
-                                                 }
-                                                 """)
+        self.pushbutton_graph_save.setStyleSheet("QPushButton{\
+                                                 min-width: 150px;\
+                                                 min-height: 60px;\
+                                                 }")
 
         self.pushbutton_data_save = QPushButton("Save Data")
-        self.pushbutton_data_save.setStyleSheet("""
-                                                 QPushButton{
-                                                 min-width: 150px;
-                                                 min-height: 60px;
-                                                 }
-                                                 """)
+        self.pushbutton_data_save.setStyleSheet("QPushButton{\
+                                                 min-width: 150px;\
+                                                 min-height: 60px;\
+                                                 }")
 
         widget = QWidget()
         widget.setMinimumSize(20, 300)

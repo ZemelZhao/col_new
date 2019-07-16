@@ -544,6 +544,7 @@ class WindowOption(QWidget):
         self.stack_window.addWidget(self.page1)
 
 
+
 if __name__ == '__main__':
     import sys
     from PyQt5.QtWidgets import QApplication
