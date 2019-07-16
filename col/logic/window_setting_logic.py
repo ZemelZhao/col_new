@@ -116,6 +116,7 @@ class WindowOptionLogic(WindowOption):
         self.dict_conf = self.conf.config_read_ini()
 
     def display_initial(self):
+        self.dict_conf = self.conf.config_read()
         dict_filter = self.dict_conf['Filter']
         dict_data = self.dict_conf['Data']
         dict_sock = self.dict_conf['Socket']
@@ -167,12 +168,12 @@ class WindowOptionLogic(WindowOption):
         self.dict_conf['Socket']['tcp_port'] = self.lineedit_tcp_port.text()
 
         self.conf.config_write(self.dict_conf)
-        self.log.info(self, 'Close Window Saved')
+        self.log.debug(self, 'Close Window Saved')
 
         self.close()
 
     def action_pushbutton_de_page1(self):
-        self.log.info(self, 'Close Window without Save')
+        self.log.debug(self, 'Close Window without Save')
         self.close()
 
     def action_pushbutton_re_page0(self):
@@ -181,7 +182,7 @@ class WindowOptionLogic(WindowOption):
     def action_pushbutton_re_page1(self):
         self.dict_conf = self.conf.config_read()
         self.display_initial()
-        self.log.info(self, 'Reset All Config')
+        self.log.debug(self, 'Reset All Config')
 
     def action_notch_filter_change(self):
         self.combobox_notch_filter.setEnabled(self.checkbox_notch_filter.isChecked())

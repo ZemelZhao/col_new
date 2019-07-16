@@ -76,9 +76,6 @@ class WindowAbout(QWidget):
 
         layout_button_ok = QHBoxLayout()
         layout_button_ok.setAlignment(Qt.AlignRight)
-        layout_main.addLayout(layout_button_ok)
-        self.pushbutton_ok = QPushButton('&Ok')
-        layout_button_ok.addWidget(self.pushbutton_ok)
 
 class WindowHelp(QWidget):
     def __init__(self):
@@ -99,22 +96,12 @@ class WindowHelp(QWidget):
         label_email_address = QLabel('zemzhao@163.com')
         label_email_address.setFont(font)
 
-        self.pushbutton_ok = QPushButton('&OK')
 
         layout_main = QVBoxLayout()
         layout_main.setAlignment(Qt.AlignCenter)
         self.setLayout(layout_main)
         layout_main.addWidget(label_email)
         layout_main.addWidget(label_email_address)
-
-        layout_pushbutton_ok = QHBoxLayout()
-        layout_pushbutton_ok.addStretch(1)
-        layout_pushbutton_ok.addWidget(self.pushbutton_ok)
-
-        layout_main.addLayout(layout_pushbutton_ok)
-
-
-
 
 if __name__ == '__main__':
     import sys

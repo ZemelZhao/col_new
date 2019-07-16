@@ -63,7 +63,7 @@ class WindowGraphShowLogic(WindowGraphShow):
         self.set_number = int(dict_data['set_number'])
         self.train_pass_all = self.period_time + (self.set_number - 1)*(self.period_time + self.restart_time)
         self.time_period = self.period_time + self.restart_time
-        self.log.info(self, 'Read Config')
+        self.log.debug(self, 'Read Config')
 
     def isClosed(self):
         return self.judge_close
@@ -76,11 +76,11 @@ class WindowGraphShowLogic(WindowGraphShow):
 
     def graph_save(self):
         self.signal_pic_save.emit(True)
-        self.log.info(self, 'Save Picture')
+        self.log.debug(self, 'Save Picture')
 
     def data_save(self):
         self.signal_file_save.emit(True)
-        self.log.info(self, 'Save Data')
+        self.log.debug(self, 'Save Data')
 
     def update_graph(self):
         data = np.frombuffer(self.shared_data_graph.get_obj())

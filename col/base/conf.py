@@ -73,7 +73,7 @@ class ConfigProcess(object):
         """DocString for config_read"""
         #@todo: to be defined.
         res_dict = self.__config_read()
-        self.log.info(self, 'Read Config')
+        self.log.debug(self, 'Read Config')
         return res_dict
 
     def config_write(self, cache_dict):
@@ -81,7 +81,6 @@ class ConfigProcess(object):
         #@todo: to be defined.
         self.__config_write(cache_dict)
         self.log.info(self, 'Change Config')
-
 
 
 if __name__ == '__main__':

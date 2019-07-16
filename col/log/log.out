@@ -724,3 +724,94 @@
 [2019-07-16 07:57:04][DEBUG][WindowGraphShowLogic] Open Window
 [2019-07-16 07:57:05][INFO][ConfigProcess] Read Config
 [2019-07-16 07:57:05][INFO][ConfigProcess] Read Config
+[2019-07-16 08:10:57][INFO][ConfigProcess] Initialize Config
+[2019-07-16 08:10:57][INFO][ConfigProcess] Read Config
+[2019-07-16 08:10:57][INFO][ConfigProcess] Read Config
+[2019-07-16 08:10:57][INFO][ConfigProcess] Read Config
+[2019-07-16 08:10:57][INFO][Cal] Change Status
+[2019-07-16 08:10:57][INFO][Cal] Design Filter
+[2019-07-16 08:10:57][DEBUG][WindowOptionLogic] Open Window
+[2019-07-16 08:10:58][DEBUG][WindowOptionLogic] Close Window
+[2019-07-16 08:11:07][INFO][ConfigProcess] Initialize Config
+[2019-07-16 08:11:07][INFO][ConfigProcess] Read Config
+[2019-07-16 08:11:07][INFO][ConfigProcess] Read Config
+[2019-07-16 08:11:07][INFO][ConfigProcess] Read Config
+[2019-07-16 08:11:07][INFO][Cal] Change Status
+[2019-07-16 08:11:07][INFO][Cal] Design Filter
+[2019-07-16 08:11:07][DEBUG][WindowOptionLogic] Open Window
+[2019-07-16 08:11:15][INFO][ConfigProcess] Change Config
+[2019-07-16 08:11:15][INFO][WindowOptionLogic] Close Window Saved
+[2019-07-16 08:11:15][DEBUG][WindowOptionLogic] Close Window
+[2019-07-16 08:11:19][DEBUG][WindowOptionLogic] Open Window
+[2019-07-16 08:11:28][INFO][ConfigProcess] Change Config
+[2019-07-16 08:11:28][INFO][WindowOptionLogic] Close Window Saved
+[2019-07-16 08:11:28][DEBUG][WindowOptionLogic] Close Window
+[2019-07-16 08:11:29][DEBUG][WindowOptionLogic] Open Window
+[2019-07-16 08:11:35][INFO][ConfigProcess] Change Config
+[2019-07-16 08:11:35][INFO][WindowOptionLogic] Close Window Saved
+[2019-07-16 08:11:35][DEBUG][WindowOptionLogic] Close Window
+[2019-07-16 08:11:36][DEBUG][WindowOptionLogic] Open Window
+[2019-07-16 08:11:44][DEBUG][WindowOptionLogic] Close Window
+[2019-07-16 08:11:46][DEBUG][WindowOptionLogic] Close Window
+[2019-07-16 08:20:56][DEBUG][WindowOptionLogic] Open Window
+[2019-07-16 08:21:01][INFO][ConfigProcess] Change Config
+[2019-07-16 08:21:01][INFO][WindowOptionLogic] Close Window Saved
+[2019-07-16 08:21:01][DEBUG][WindowOptionLogic] Close Window
+[2019-07-16 08:37:56][INFO][ConfigProcess] Initialize Config
+[2019-07-16 08:37:56][DEBUG][ConfigProcess] Read Config
+[2019-07-16 08:37:56][DEBUG][ConfigProcess] Read Config
+[2019-07-16 08:37:56][DEBUG][ConfigProcess] Read Config
+[2019-07-16 08:37:56][INFO][Cal] Change Status
+[2019-07-16 08:37:56][INFO][Cal] Design Filter
+[2019-07-16 08:37:57][DEBUG][ConfigProcess] Read Config
+[2019-07-16 08:37:57][DEBUG][WindowOptionLogic] Open Window
+[2019-07-16 08:38:02][INFO][ConfigProcess] Change Config
+[2019-07-16 08:38:02][INFO][WindowOptionLogic] Close Window Saved
+[2019-07-16 08:38:02][DEBUG][WindowOptionLogic] Close Window
+[2019-07-16 08:38:02][DEBUG][ConfigProcess] Read Config
+[2019-07-16 08:38:02][DEBUG][WindowOptionLogic] Open Window
+[2019-07-16 08:38:09][INFO][ConfigProcess] Change Config
+[2019-07-16 08:38:09][INFO][WindowOptionLogic] Close Window Saved
+[2019-07-16 08:38:09][DEBUG][WindowOptionLogic] Close Window
+[2019-07-16 08:38:10][DEBUG][ConfigProcess] Read Config
+[2019-07-16 08:38:10][DEBUG][WindowOptionLogic] Open Window
+[2019-07-16 08:38:13][INFO][ConfigProcess] Change Config
+[2019-07-16 08:38:13][INFO][WindowOptionLogic] Close Window Saved
+[2019-07-16 08:38:13][DEBUG][WindowOptionLogic] Close Window
+[2019-07-16 08:38:23][DEBUG][WindowOptionLogic] Close Window
+[2019-07-16 08:38:25][INFO][ConfigProcess] Initialize Config
+[2019-07-16 08:38:25][DEBUG][ConfigProcess] Read Config
+[2019-07-16 08:38:25][DEBUG][ConfigProcess] Read Config
+[2019-07-16 08:38:25][DEBUG][ConfigProcess] Read Config
+[2019-07-16 08:38:25][INFO][Cal] Change Status
+[2019-07-16 08:38:25][INFO][Cal] Design Filter
+[2019-07-16 08:38:26][DEBUG][ConfigProcess] Read Config
+[2019-07-16 08:38:26][DEBUG][WindowOptionLogic] Open Window
+[2019-07-16 08:38:34][INFO][ConfigProcess] Change Config
+[2019-07-16 08:38:34][INFO][WindowOptionLogic] Close Window Saved
+[2019-07-16 08:38:34][DEBUG][WindowOptionLogic] Close Window
+[2019-07-16 08:38:34][DEBUG][ConfigProcess] Read Config
+[2019-07-16 08:38:34][DEBUG][WindowOptionLogic] Open Window
+[2019-07-16 08:38:38][DEBUG][ConfigProcess] Read Config
+[2019-07-16 08:38:38][DEBUG][ConfigProcess] Read Config
+[2019-07-16 08:38:38][INFO][WindowOptionLogic] Reset All Config
+[2019-07-16 08:38:42][DEBUG][ConfigProcess] Read Config
+[2019-07-16 08:38:42][DEBUG][ConfigProcess] Read Config
+[2019-07-16 08:38:42][INFO][WindowOptionLogic] Reset All Config
+[2019-07-16 08:38:48][DEBUG][ConfigProcess] Read Config
+[2019-07-16 08:38:48][DEBUG][ConfigProcess] Read Config
+[2019-07-16 08:38:48][INFO][WindowOptionLogic] Reset All Config
+[2019-07-16 08:38:53][INFO][ConfigProcess] Change Config
+[2019-07-16 08:38:53][INFO][WindowOptionLogic] Close Window Saved
+[2019-07-16 08:38:53][DEBUG][WindowOptionLogic] Close Window
+[2019-07-16 08:38:54][DEBUG][ConfigProcess] Read Config
+[2019-07-16 08:38:54][DEBUG][WindowOptionLogic] Open Window
+[2019-07-16 08:38:57][INFO][ConfigProcess] Change Config
+[2019-07-16 08:38:57][INFO][WindowOptionLogic] Close Window Saved
+[2019-07-16 08:38:57][DEBUG][WindowOptionLogic] Close Window
+[2019-07-16 08:39:00][DEBUG][WindowOptionLogic] Close Window
+[2019-07-16 08:57:53][DEBUG][WindowAboutLogic] Open Window
+[2019-07-16 08:58:03][DEBUG][WindowAboutLogic] Open Window
+[2019-07-16 08:58:21][DEBUG][WindowHelpLogic] Open Window
+[2019-07-16 08:58:50][DEBUG][WindowHelpLogic] Open Window
+[2019-07-16 08:58:55][DEBUG][WindowHelpLogic] Open Window

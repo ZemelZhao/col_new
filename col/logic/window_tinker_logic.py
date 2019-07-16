@@ -10,7 +10,7 @@ try:
     from base.log import Log
 except ImportError:
     pass
-from PyQt5.QtCore import pyqtSignal, QObject
+from PyQt5.QtCore import Qt, pyqtSignal, QObject
 import pyqtgraph as pg
 import numpy as np
 import time
@@ -26,12 +26,13 @@ class WindowAboutLogic(WindowAbout):
 
     def initUI(self):
         super(WindowAboutLogic, self).initUI()
-        self.log.info(self, 'Open Window')
-        self.pushbutton_ok.clicked.connect(self.action_pushbutton_ok)
+        self.log.debug(self, 'Open Window')
 
-    def action_pushbutton_ok(self):
-        self.log.info(self, 'Close Window')
-        self.close()
+    def keyReleaseEvent(self, event):
+        """DocString for keyReleaseEvent"""
+        #@todo: to be defined.
+        if event.key() == Qt.Key_Q:
+            self.close()
 
 class WindowHelpLogic(WindowHelp):
     def __init__(self, log, parent=None):
@@ -39,13 +40,19 @@ class WindowHelpLogic(WindowHelp):
         super(WindowHelpLogic, self).__init__()
         self.parent = parent
 
+    def keyReleaseEvent(self, event):
+        """DocString for keyReleaseEvent"""
+        #@todo: to be defined.
+        if event.key() == Qt.Key_Q:
+            self.close()
+
+
     def initUI(self):
         super(WindowHelpLogic, self).initUI()
-        self.pushbutton_ok.clicked.connect(self.action_pushbutton_ok)
-        self.log.info(self, 'Open Window')
+        self.log.debug(self, 'Open Window')
 
     def action_pushbutton_ok(self):
-        self.log.info(self, 'Close Window')
+        self.log.debug(self, 'Close Window')
         self.close()
 
 if __name__ == '__main__':
@@ -53,7 +60,7 @@ if __name__ == '__main__':
     from PyQt5.QtWidgets import QApplication
     app = QApplication(sys.argv)
     log = Log(os.path.join(os.path.split(os.path.realpath(__file__))[0], os.path.pardir, 'log', 'log.out'))
-    win = WindowAboutLogic(log)
+    win = WindowHelpLogic(log)
     win.show()
     sys.exit(app.exec_())
 
