@@ -60,15 +60,15 @@ class WindowOptionLogic(WindowOption):
 
         if event.key() == Qt.Key_Return:
             if self.stack_window.currentIndex() == 1:
-                self.action_pushbutton_ok_page1()
+                self.pushbutton_ok_page1.click()
             else:
-                self.action_pushbutton_ok_page0()
+                self.pushbutton_ok_page0.click()
 
         if event.key() == Qt.Key_R:
             if self.stack_window.currentIndex() == 1:
-                self.action_pushbutton_re_page1()
+                self.pushbutton_re_page1.click()
             else:
-                self.action_pushbutton_re_page0()
+                self.pushbutton_re_page0.click()
 
         if event.key() == Qt.Key_Q:
             self.close()

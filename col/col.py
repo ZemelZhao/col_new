@@ -16,6 +16,7 @@ try:
     from base.val import GlobalConstValue
     from cal.cal import Cal, FileSave
     from base.val import GlobalConstValue
+    from base.timer import RTimer
 except ImportError:
     pass
 import pyqtgraph as pg
@@ -26,6 +27,7 @@ import numpy as np
 import socket
 import time
 import tempfile
+
 
 __Author__ = 'Zhao Zeming'
 __Version__ = 1.0
@@ -210,7 +212,7 @@ class MainWindow(WindowMain):
         """DocString for tcp_ip_monit"""
         #@todo: to be defined.
         if self.shared_tcp_ip_stat.value != 1:
-            self.close()
+            self.file_save()
 
 
     def show_warning(self):
@@ -231,7 +233,8 @@ class MainCom(QObject, mp.Process):
     state_tcp_ip = pyqtSignal(int)
     def __init__(self, conf, log, shared_data_graph,
                  config_status_change, status_change,
-                 data_save, shared_tcp_ip_stat, save_name):
+                 data_save, shared_tcp_ip_stat,
+                 save_name, local_tcp_ip):
         super(MainCom, self).__init__()
         self.save_name = save_name
         self.shared_data_graph = shared_data_graph
@@ -251,7 +254,19 @@ class MainCom(QObject, mp.Process):
         self.new = True
         self.iter_send = 1
         self.cache_data = []
+        self.judge_tcp_ip = local_tcp_ip
 
+        self.timer_tcp_ip = RTimer(1, self.tcp_ip_monit)
+        self.timer_tcp_ip.start()
+
+    def tcp_ip_monit(self):
+        """DocString for tcp_ip_monit"""
+        #@todo: to be defined.
+        if self.judge_tcp_ip.value:
+            self.shared_tcp_ip_stat.value = 1
+        else:
+            self.shared_tcp_ip_stat.value = -1
+        self.judge_tcp_ip.value = False
 
     def cal_tcp_ip_bag(self, freq, channel_num):
         num_section = channel_num*16 // 8 + 6
@@ -273,7 +288,7 @@ class MainCom(QObject, mp.Process):
             freq_sample = int(dict_conf['Filter']['sampling_freq'])
             num_bag = self.cal_tcp_ip_bag(freq_sample, channel_num)
             address = (dict_conf['Socket']['tcp_address'], int(dict_conf['Socket']['tcp_port']))
-            upload_config = self.cal.change_status(test=False, hardware_filter=False, command_default=True)
+            upload_config = self.cal.change_status(test=True, hardware_filter=False, command_default=True)
             cache_max_length = 5*channel_num*show_freq*self.data_show_second
             cache_min_length = channel_num*show_freq*self.data_show_second
             self.cache_data = np.array(cache_min_length*[0])
@@ -302,6 +317,7 @@ class MainCom(QObject, mp.Process):
             iter_num = self.iter_num_ini
             while self.not_change.value:
                 data = self.sock.recv(num_bag)
+                self.judge_tcp_ip.value = True
                 self.temp_file.write(temp_data)
                 if self.data_save.value:
                     self.temp_file.write(self.list_temp_file_process[self.data_save.value-1])
@@ -388,6 +404,7 @@ class MainCom(QObject, mp.Process):
     def closeEvent(self, e):
         if self.data_save.value == 3:
             self.make_file_save()
+        self.timer_tcp_ip.cancel()
         self.terminate()
 
 class ProcessMonitor(QObject, mp.Process):
@@ -435,6 +452,7 @@ if __name__ == '__main__': # Entry
     shared_status_change = mp.Value('b', False)
     shared_data_save = mp.Value('i', 0)
     shared_tcp_ip_status = mp.Value('i', 0)
+    local_com_tcp_ip = mp.Value('b', False)
     time_cache = time.localtime(time.time())
     save_name = '%4d%02d%02d%02d%02d%02d' % (time_cache[0], time_cache[1], time_cache[2],
                                             time_cache[3], time_cache[4], time_cache[5])
@@ -447,7 +465,8 @@ if __name__ == '__main__': # Entry
     conf = ConfigProcess(config_ini_path, config_temp_path, log)
 
     com = MainCom(conf, log, shared_data_graph, shared_config_change,
-                  shared_status_change, shared_data_save, shared_tcp_ip_status, save_name)
+                  shared_status_change, shared_data_save,
+                  shared_tcp_ip_status, save_name, local_com_tcp_ip)
     mon = ProcessMonitor()
     sav = ProcessSave(queue_save)
     app = QApplication(sys.argv)
