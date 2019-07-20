@@ -13,9 +13,8 @@ try:
     from logic.window_tinker_logic import WindowHelpLogic, WindowAboutLogic
     from base.log import Log
     from base.conf import ConfigProcess
-    from base.val import GlobalConstValue
+    from base.val import GlobalConstValue as gcv
     from cal.cal import Cal, FileSave
-    from base.val import GlobalConstValue
     from base.timer import RTimer
 except ImportError:
     pass
@@ -27,7 +26,6 @@ import numpy as np
 import socket
 import time
 import tempfile
-
 
 __Author__ = 'Zhao Zeming'
 __Version__ = 1.0
@@ -244,13 +242,12 @@ class MainCom(QObject, mp.Process):
         self.conf = conf
         self.log = log
         self.cal = Cal(self.conf, self.log)
-        self.global_val = GlobalConstValue()
+        self.global_val = gcv()
         self.data_per_line = self.global_val.gui_show_num_all
         self.data_show_second = self.global_val.gui_show_second
         self.shared_tcp_ip_stat = shared_tcp_ip_stat
         self.temp_file = tempfile.TemporaryFile()
-        self.list_temp_file_process = [bytes(512*[0]), bytes(512*[1]),
-                                        bytes(512*[2]), bytes(512*[3])]
+        self.flag = gcv.flag_trigger
         self.new = True
         self.iter_send = 1
         self.cache_data = []
@@ -288,14 +285,14 @@ class MainCom(QObject, mp.Process):
             freq_sample = int(dict_conf['Filter']['sampling_freq'])
             num_bag = self.cal_tcp_ip_bag(freq_sample, channel_num)
             address = (dict_conf['Socket']['tcp_address'], int(dict_conf['Socket']['tcp_port']))
-            upload_config = self.cal.change_status(test=True, hardware_filter=False, command_default=True)
+            upload_config = self.cal.change_status(test=False, hardware_filter=False, command_default=True)
             cache_max_length = 5*channel_num*show_freq*self.data_show_second
             cache_min_length = channel_num*show_freq*self.data_show_second
             self.cache_data = np.array(cache_min_length*[0])
             iter_list = np.linspace(0, show_freq*self.data_show_second-1, self.data_per_line, dtype=np.int)
             iter_send = self.iter_send
             num_show = channel_num * self.data_per_line
-            self.temp_file.truncate()
+            self.temp_file.write(self.flag[4])
             if self.new:
                 self.new = False
             else:
@@ -320,7 +317,7 @@ class MainCom(QObject, mp.Process):
                 self.judge_tcp_ip.value = True
                 self.temp_file.write(temp_data)
                 if self.data_save.value:
-                    self.temp_file.write(self.list_temp_file_process[self.data_save.value-1])
+                    self.temp_file.write(self.flag[self.data_save.value-1])
                     self.data_save.value = 0
                     self.temp_file.write(temp_data)
                     temp_data = b''
@@ -363,19 +360,20 @@ class MainCom(QObject, mp.Process):
             file_type = int(dict_config['Data']['filetype_save'])
             self.temp_file.seek(0)
             data = self.temp_file.read()
-            file_save = FileSave(self.conf, self.log)
-            file_path = os.path.split(os.path.realpath(__file__))[0]
-            res = file_save.run(data, f=False)
-            if file_type:
-                path_file_save = os.path.join(file_path, 'save', '%s.npy' % self.save_name)
-                np.save(path_file_save, res)
-            else:
-                path_file_save = os.path.join(file_path, 'save', '%s.csv' % self.save_name)
-                np.savetxt(path_file_save, res, delimiter=',')
-                pass
-            print('Data Saved Successfully')
+            with open('temp.dat', 'wb') as f:
+                f.write(data)
+            #file_save = FileSave(self.conf, self.log)
+            #file_path = os.path.split(os.path.realpath(__file__))[0]
+            #res = file_save.run(data, f=False)
+            #if file_type:
+                #path_file_save = os.path.join(file_path, 'save', '%s.npy' % self.save_name)
+                #np.save(path_file_save, res)
+            #else:
+                #path_file_save = os.path.join(file_path, 'save', '%s.csv' % self.save_name)
+                #np.savetxt(path_file_save, res, delimiter=',')
+                #pass
         except:
-            print('Data Save Failed')
+            pass
 
     def find_start_flag(self, data):
         """DocString for find_start_flag"""
@@ -446,7 +444,7 @@ class ProcessSave(QObject, mp.Process):
 
 if __name__ == '__main__': # Entry
     from PyQt5.QtWidgets import QApplication
-    val = GlobalConstValue()
+    val = gcv()
     shared_data_graph = mp.Array('d', np.array(256*val.gui_show_num_all*[0]))
     shared_config_change = mp.Value('b', False)
     shared_status_change = mp.Value('b', False)
