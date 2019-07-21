@@ -21,93 +21,44 @@ from scipy import signal as sg
 
 class FileSave(object):
     """ DocString for FileSave"""
-    def __init__(self, conf, log):
+    def __init__(self, conf, log, save_type, save_name):
         #@todo: to be defined.
         self.conf = conf
         self.log = log
         self.cpath = os.path.join(os.path.split(os.path.realpath(__file__))[0], '_filter.cpython-36m-x86_64-linux-gnu.so')
         self.lib = cdll.LoadLibrary(self.cpath)
+        self.save_type = save_type
+        self.save_name = save_name
 
-        self.func_change_stat = self.lib.changeStat
-        self.func_change_stat.argtypes = [c_int, c_int]
-
-        self.func_run = self.lib.run
-        self.func_run.argtypes = [c_char_p, np.ctypeslib.ndpointer(dtype=np.float64, ndim=1, flags='C_CONTIGUOUS'), c_int]
-
-        self.list_cache_res = []
-
-    def data_exact(self):
-        """DocString for data_exact"""
-        #@todo: to be defined.
-        index = 0
-        time_record = index
-        index_max = len(self.cache)
-        num_leap_data = self.channel_num * 2 + 6
-        num_leap_flag = 512
-        while index < index_max:
-            temp_res = np.zeros(self.channel_num + 2)
-            if self.cache[index] == 0x55 and self.cache[index+1] == 0xAA:
-                temp_num = self.func_run(self.cache[index : index + num_leap_data], temp_res, num_leap_data)
-                if temp_num:
-                    temp_res[-1] = time_record
-                    time_record += self.time_freq_sample
-                    self.list_cache_res.append(temp_res)
-                    index += num_leap_data
-                else:
-                    index += 1
-            elif self.cache[index] == self.cache[index + 1]:
-                flag = self.make_flag(index)
-                if flag:
-                    self.list_cache_res[-1][-2] = flag
-                    index += num_leap_flag
-                else:
-                    index += 1
-            else:
-                index += 1
-        return np.array(self.list_cache_res)
-
-    def make_flag(self, index):
-        """DocString for make_flag"""
-        #@todo: to be defined.
-		#:index: @todo.
-        temp = self.cache[index]
-        for i in range(512):
-            if self.cache[index + i] != temp:
-                return 0
-        return temp + 1
-
-    def run(self, data_ini, f=False):
+    def run(self, data):
         """DocString for file_save"""
         #@todo: to be defined.
         #:file_path_data: @todo.
 		#:file_path_save: @todo.
 		#:filter: @todo.
-
-        dict_res = self.conf.config_read()
-        self.channel_num = int(dict_res['Data']['channel_num'])
-        self.time_freq_sample = 1 / int(dict_res['Filter']['sampling_freq'])
-        self.func_change_stat(self.channel_num, 0)
-        self.func_change_stat(250, 1)
-
-        self.cache = data_ini
-
-        res = self.data_exact()
-        res[:, :self.channel_num] -= 32768
-        if filter:
-            pass
-        return res
+        try:
+            if self.save_type:
+                path_file_save = '%s.npy' % self.save_name
+                np.save(path_file_save, data)
+            else:
+                path_file_save = '%s.csv' % self.save_name
+                np.savetxt(path_file_save, data, delimiter=',')
+        except:
+            self.log.warning(self, 'File Save Failed')
 
 class PicSave(object):
     """ DocString for Save"""
-    def __init__(self, conf, log):
+    def __init__(self, conf, log, dir_pic):
         #@todo: to be defined.
         #:conf: @todo.
 		#:log: @todo.
         self.conf = conf
         self.log = log
+        self.dir_pic = dir_pic
         self.val = gcv()
+        self.num = 0
 
-    def draw(self, data, path_pic='temp.svg', all=0):
+    def run(self, data, all=0):
         """DocString for draw"""
         #@todo: to be defined.
 		#:data: @todo.
@@ -115,12 +66,9 @@ class PicSave(object):
         dict_config = self.conf.config_read()
         channel_num = data.shape[1]
         show_second = self.val.gui_show_second
-        data *= 20
+        data_temp = data*10
         freq_sample = int(dict_config['Filter']['sampling_freq'])
-        if data.shape[0] < show_second*freq_sample:
-            temp = np.zeros((show_second*freq_sample - data.shape[0], channel_num))
-            data = np.vstack((temp, data))
-        t = np.arange(data.shape[0])* 10 / (data.shape[0])
+        t = np.arange(data.shape[0]) / freq_sample
         plt.figure(figsize=(19.2, 10.8 / 64 * channel_num), )
 
         plt.gca().invert_yaxis()
@@ -129,16 +77,23 @@ class PicSave(object):
                             bottom=0.025 * 64 / channel_num,
                             top=1+0.03 * 64 / channel_num)
         plt.yticks(np.arange(1, channel_num+1))
-        plt.xlim(0, 10)
+        plt.xlim(0, t[-1])
         plt.ylim(0, channel_num+4)
         plt.plot((2, 2), (0, 300), c='black')
         plt.plot((4, 4), (0, 300), c='black')
         plt.plot((6, 6), (0, 300), c='black')
         plt.plot((8, 8), (0, 300), c='black')
-        data = data.T
+        data_temp = data_temp.T
         for i in range(channel_num):
-            plt.plot(t, data[i] / 1+i+1, )
-        plt.savefig(path_pic, format='svg')
+            plt.plot(t, data_temp[i] / 1+i+1, linewidth=0.3)
+        path_pic = os.path.join(self.dir_pic, 'temp%d.svg' % self.num)
+        self.num += 1
+        try:
+            plt.savefig(path_pic, format='svg')
+        except FileNotFoundError:
+            os.mkdir(self.dir_pic)
+            plt.savefig(path_pic, format='svg')
+
 
 class DataProcess(object):
     """ DocString for Save"""
@@ -286,8 +241,7 @@ class DataProcess(object):
 
 class Save(object):
     """ DocString for Save"""
-
-    def __init__(self, conf, log, save_loc=1, filt=0):
+    def __init__(self, conf, log, path_file, dir_pic, save_loc=1, filt=0, save_type=1):
         #@todo: to be defined.
         #:conf: @todo.
 		#:log: @todo.
@@ -295,49 +249,46 @@ class Save(object):
         self.conf = conf
         self.log = log
         self.data_process = DataProcess(self.conf, self.log, save_loc, filt)
-        self.save_pic = PicSave(self.conf, self.log)
-        self.save_file = FileSave(self.conf, self.log)
+        self.save_pic = PicSave(self.conf, self.log, dir_pic)
+        self.save_file = FileSave(self.conf, self.log, save_type, path_file)
         self.val = gcv()
-
 
     def run(self, data):
         """DocString for run"""
         #@todo: to be defined.
 		#:data: @todo.
+        dict_res = self.conf.config_read()
+        self.freq_sample = int(dict_res['Filter']['sampling_freq'])
+        self.channel_num = int(dict_res['Data']['channel_num'])
         self.data = self.data_process.run(data)
-        data = self.data[:, 62]
-        a = [0 for i in range(30-1)]
-        a.insert(0, 1)
-        a.append(-0.965081805687581)
-        b = [0 for i in range(30-1)]
-        b.insert(0, 0.98254090284379)
-        b.append(-0.98254090284379)
-        data = sg.filtfilt(b, a, data)
-        [b, a] = sg.butter(5, [0.03, 0.9], 'bandpass')
-        data = sg.filtfilt(b, a, data)
-        yy = fft(data)
-        yy = np.abs(yy)
-        print(len(data))
-        x = np.linspace(0, 1000/2, len(data) // 2)
-        print(max(data) - min(data))
-        plt.subplot(211)
-        plt.plot(data)
-        plt.xlabel('time(s)')
-        plt.ylabel('Volt')
-        plt.subplot(212)
-        plt.plot(x, yy[:len(data) // 2])
-        plt.xlabel('freq(Hz)')
-        plt.show()
+        self.__find_flag()
+        self.__save_pic()
+        self.__save_file()
 
 
-
-    def __find_flag(self):
+    def __find_flag(self, ):
         """DocString for find_flag"""
         #@todo: to be defined.
-        list_res = []
+        self.list_res = []
+        for i in range(self.data.shape[0]):
+            if self.data[i][-1] != 0:
+                self.list_res.append((i, int(self.data[i][-1])))
 
+    def __save_pic(self, ):
+        """DocString for __save_pic"""
+        #@todo: to be defined.
+        dot_per_channel = self.freq_sample * self.val.gui_show_second
+        for i in self.list_res:
+            if i[1] == 2:
+                if i[0] < dot_per_channel:
+                    self.save_pic.run(self.data[:i[0], :self.channel_num], self.save_pic)
+                else:
+                    self.save_pic.run(self.data[i[0]-dot_per_channel:i[0], :self.channel_num], self.save_pic)
 
-
+    def __save_file(self, ):
+        """DocString for __save_file"""
+        #@todo: to be defined.
+        self.save_file.run(self.data)
 
 
 if __name__ == '__main__':

@@ -41,6 +41,8 @@ class WindowGraphShowLogic(WindowGraphShow):
         self.timer_graph.timeout.connect(self.update_graph)
         self.timer_lcd.timeout.connect(self.update_lcd)
         self.lcd_shown = False
+        self.lcd_num_show_record = 0
+        self.lcd_auto_record = False
         super(WindowGraphShowLogic, self).__init__()
 
     def show(self, *arg, **kwarg):
@@ -108,9 +110,7 @@ class WindowGraphShowLogic(WindowGraphShow):
 
     def lcd_control(self):
         if self.restart_auto:
-            if self.lcd_shown:
-                pass
-            else:
+            if not self.lcd_shown:
                 self.time_start = time.time()
                 self.lcd_shown = True
             time_pass = time.time() - self.time_start
@@ -122,20 +122,21 @@ class WindowGraphShowLogic(WindowGraphShow):
                 lcd_time = (time_pass) % self.time_period
                 if lcd_time > self.period_time:
                     self.lcd_time_show = lcd_time - self.period_time + 1
+                    if self.lcd_auto_record:
+                        self.signal_trigger.emit(1)
+                        self.lcd_auto_record = False
                 else:
                     self.lcd_time_show = self.period_time - lcd_time
+                    self.lcd_auto_record = True
                 self.lcd_num_show = (time_pass) // self.time_period + 1
         else:
-            if self.lcd_shown:
-                pass
-            else:
+            if not self.lcd_shown:
                 self.time_start = time.time()
                 self.lcd_shown = True
             time_pass = time.time() - self.time_start
             if self.set_number > 0:
                 if time_pass > self.period_time:
                     self.lcd_shown = False
-                    self.signal_set_done.emit(True)
                     self.set_number -= 1
                     self.lcd_time_show = 0
                     self.timer_lcd.stop()
@@ -145,6 +146,11 @@ class WindowGraphShowLogic(WindowGraphShow):
             else:
                 self.lcd_time_show = int(time_pass)
                 self.lcd_num_show = 0
+        if self.lcd_num_show != self.lcd_num_show_record:
+            self.signal_trigger.emit(1)
+            self.lcd_num_show_record = self.lcd_num_show
+        if self.lcd_num_show == 0:
+            self.lcd_num_show = 'ES'
 
     @pyqtSlot(bool)
     def update_config(self, *arg):

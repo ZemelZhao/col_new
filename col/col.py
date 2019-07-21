@@ -13,9 +13,10 @@ try:
     from logic.window_tinker_logic import WindowHelpLogic, WindowAboutLogic
     from base.log import Log
     from base.conf import ConfigProcess
+    from base.timer import RTimer
     from base.val import GlobalConstValue as gcv
     from cal.cal import Cal, FileSave
-    from base.timer import RTimer
+    from cal.save import Save
 except ImportError:
     pass
 import pyqtgraph as pg
@@ -111,6 +112,8 @@ class MainWindow(WindowMain):
                 self.window_main_option.pushbutton_ok_page1.clicked.connect(self.slot_refresh_config)
                 self.window_main_option.show()
 
+
+
     def graph_show(self):
         try:
             if self.window_graph_show.isClosed():
@@ -132,6 +135,7 @@ class MainWindow(WindowMain):
                 self.signal_start_refresh.connect(self.window_graph_show.update_lcd)
                 self.window_graph_show.signal_file_save.connect(self.file_save)
                 self.window_graph_show.signal_pic_save.connect(self.pic_save)
+                self.window_graph_show.signal_trigger.connect(self.slot_graph_emit)
                 #self.window_graph_show.signal_trigger.connect(self.)
                 self.window_graph_show.show()
 
@@ -147,19 +151,7 @@ class MainWindow(WindowMain):
 
     def pic_save(self):
         self.signal_data_process.emit(2)
-        try:
-            if not self.window_graph_show.isClosed():
-                judge = False
-                if not os.path.exists(self.dir_save):
-                    os.mkdir(self.dir_save)
-                self.signal_pic_save.emit(self.window_graph_show.graph_show, self.dir_save)
-            else:
-                judge = True
-        except:
-            judge = True
-        finally:
-            if judge:
-                self.slot_status_bar_changed('Please open the graph window')
+        self.slot_status_bar_changed('Picture Saved Successfully')
 
     def file_save(self):
         """DocString for file_save"""
@@ -201,6 +193,13 @@ class MainWindow(WindowMain):
     def slot_status_bar_changed(self, e):
         self.statusBar().showMessage(e)
         self.timer_clear_status.start(1500)
+
+    @pyqtSlot(int)
+    def slot_graph_emit(self, e):
+        """DocString for slot_graph_emit"""
+        #@todo: to be defined.
+        self.signal_data_process.emit(e)
+
 
     def slot_status_bar_clear(self):
         self.statusBar().clearMessage()
@@ -252,6 +251,8 @@ class MainCom(QObject, mp.Process):
         self.iter_send = 1
         self.cache_data = []
         self.judge_tcp_ip = local_tcp_ip
+        self.path_dir_save = os.path.join(os.path.split(os.path.realpath(__file__))[0], 'save')
+        self.path_dir_save_name = os.path.join(self.path_dir_save, self.save_name)
 
         self.timer_tcp_ip = RTimer(1, self.tcp_ip_monit)
         self.timer_tcp_ip.start()
@@ -285,7 +286,7 @@ class MainCom(QObject, mp.Process):
             freq_sample = int(dict_conf['Filter']['sampling_freq'])
             num_bag = self.cal_tcp_ip_bag(freq_sample, channel_num)
             address = (dict_conf['Socket']['tcp_address'], int(dict_conf['Socket']['tcp_port']))
-            upload_config = self.cal.change_status(test=False, hardware_filter=False, command_default=True)
+            upload_config = self.cal.change_status(test=True, hardware_filter=False, command_default=True)
             cache_max_length = 5*channel_num*show_freq*self.data_show_second
             cache_min_length = channel_num*show_freq*self.data_show_second
             self.cache_data = np.array(cache_min_length*[0])
@@ -315,7 +316,6 @@ class MainCom(QObject, mp.Process):
             while self.not_change.value:
                 data = self.sock.recv(num_bag)
                 self.judge_tcp_ip.value = True
-                self.temp_file.write(temp_data)
                 if self.data_save.value:
                     self.temp_file.write(self.flag[self.data_save.value-1])
                     self.data_save.value = 0
@@ -352,35 +352,19 @@ class MainCom(QObject, mp.Process):
     def statusChange(self):
         self.not_change.value = False
 
-    def make_file_save(self):
+    def make_file_save(self, ):
         """DocString for make_file_save"""
         #@todo: to be defined.
         try:
-            dict_config = self.conf.config_read()
-            file_type = int(dict_config['Data']['filetype_save'])
+            dict_res = self.conf.config_read()
+            save_type = int(dict_res['Data']['filetype_save'])
             self.temp_file.seek(0)
             data = self.temp_file.read()
-            with open('temp.dat', 'wb') as f:
-                f.write(data)
-            #file_save = FileSave(self.conf, self.log)
-            #file_path = os.path.split(os.path.realpath(__file__))[0]
-            #res = file_save.run(data, f=False)
-            #if file_type:
-                #path_file_save = os.path.join(file_path, 'save', '%s.npy' % self.save_name)
-                #np.save(path_file_save, res)
-            #else:
-                #path_file_save = os.path.join(file_path, 'save', '%s.csv' % self.save_name)
-                #np.savetxt(path_file_save, res, delimiter=',')
-                #pass
+            self.save_all = Save(self.conf, self.log, self.path_dir_save_name, self.path_dir_save_name,
+                                save_loc=1, filt=0, save_type=save_type)
+            self.save_all.run(data)
         except:
-            pass
-
-    def find_start_flag(self, data):
-        """DocString for find_start_flag"""
-        #@todo: to be defined.
-        #:self: @todo.
-        pass
-
+            self.log.warning(self, 'Save Failed')
 
     def graph_stat_change(self, e):
         """DocString for graph_stat_change"""
