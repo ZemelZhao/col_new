@@ -90,7 +90,7 @@ class Cal(object):
         gap = 2
         start = freq_notch - gap
         end = freq_notch + gap
-        [b, a] = sg.butter(5, [2 * start / freq_sample, 2 * end / freq_sample], 'bandstop')
+        [b, a] = sg.butter(2, [2 * start / freq_sample, 2 * end / freq_sample], 'bandstop')
         res[0].append('filter1 A')
         res[0].append('filter1 B')
         self.cal.dict_data['filter1 A'][2] = len(a)
@@ -103,11 +103,12 @@ class Cal(object):
         # Bandpass Filter Section
         start = 5
         #end = 124
-        [b, a] = sg.butter(7, [2 * start / freq_sample], 'highpass')
-        res[0].append('filter2 A')
-        res[0].append('filter2 B')
-        self.cal.dict_data['filter2 A'][2] = len(a)
-        self.cal.dict_data['filter2 B'][2] = len(a)
+        end = 100
+        [b, a] = sg.butter(3, [2 * start / freq_sample, 2 * end / freq_sample], 'bandpass')
+        res[0].append('filter1 A')
+        res[0].append('filter1 B')
+        self.cal.dict_data['filter1 A'][2] = len(a)
+        self.cal.dict_data['filter1 B'][2] = len(a)
         res[1].append(self.cal.listdouble2listbyte(a))
         res[1].append(self.cal.listdouble2listbyte(b))
         if not hardware_filter:
@@ -215,85 +216,6 @@ class ComTinker(object):
         res[3] += num - 1
         res[4] += command_order
         res.append((res[2] + res[3] + res[4]) % 256)
-        return res
-
-class FileSave(object):
-    """ DocString for FileSave"""
-    def __init__(self, conf, log):
-        #@todo: to be defined.
-        self.conf = conf
-        self.log = log
-        self.cpath = os.path.join(os.path.split(os.path.realpath(__file__))[0], '_filter.cpython-36m-x86_64-linux-gnu.so')
-        self.lib = cdll.LoadLibrary(self.cpath)
-
-        self.func_change_stat = self.lib.changeStat
-        self.func_change_stat.argtypes = [c_int, c_int]
-
-        self.func_run = self.lib.run
-        self.func_run.argtypes = [c_char_p, np.ctypeslib.ndpointer(dtype=np.float64, ndim=1, flags='C_CONTIGUOUS'), c_int]
-
-        self.list_cache_res = []
-
-    def data_exact(self):
-        """DocString for data_exact"""
-        #@todo: to be defined.
-        index = 0
-        time_record = index
-        index_max = len(self.cache)
-        num_leap_data = self.channel_num * 2 + 6
-        num_leap_flag = 512
-        while index < index_max:
-            temp_res = np.zeros(self.channel_num + 2)
-            if self.cache[index] == 0x55 and self.cache[index+1] == 0xAA:
-                temp_num = self.func_run(self.cache[index : index + num_leap_data], temp_res, num_leap_data)
-                if temp_num:
-                    temp_res[-1] = time_record
-                    time_record += self.time_freq_sample
-                    self.list_cache_res.append(temp_res)
-                    index += num_leap_data
-                else:
-                    index += 1
-            elif self.cache[index] == self.cache[index + 1]:
-                flag = self.make_flag(index)
-                if flag:
-                    self.list_cache_res[-1][-2] = flag
-                    index += num_leap_flag
-                else:
-                    index += 1
-            else:
-                index += 1
-        return np.array(self.list_cache_res)
-
-    def make_flag(self, index):
-        """DocString for make_flag"""
-        #@todo: to be defined.
-		#:index: @todo.
-        temp = self.cache[index]
-        for i in range(512):
-            if self.cache[index + i] != temp:
-                return 0
-        return temp + 1
-
-
-    def run(self, data_ini, f=False):
-        """DocString for file_save"""
-        #@todo: to be defined.
-        #:file_path_data: @todo.
-		#:file_path_save: @todo.
-		#:filter: @todo.
-
-        dict_res = self.conf.config_read()
-        self.channel_num = int(dict_res['Data']['channel_num'])
-        self.time_freq_sample = 1 / int(dict_res['Filter']['sampling_freq'])
-        self.func_change_stat(self.channel_num, 0)
-        self.func_change_stat(250, 1)
-
-        self.cache = data_ini
-
-        res = self.data_exact()
-        res[:, :self.channel_num] -= 32768
-        if filter:
-            pass
         return res
 
 

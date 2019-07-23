@@ -15,7 +15,7 @@ try:
     from base.conf import ConfigProcess
     from base.timer import RTimer
     from base.val import GlobalConstValue as gcv
-    from cal.cal import Cal, FileSave
+    from cal.cal import Cal
     from cal.save import Save
 except ImportError:
     pass
@@ -286,7 +286,7 @@ class MainCom(QObject, mp.Process):
             freq_sample = int(dict_conf['Filter']['sampling_freq'])
             num_bag = self.cal_tcp_ip_bag(freq_sample, channel_num)
             address = (dict_conf['Socket']['tcp_address'], int(dict_conf['Socket']['tcp_port']))
-            upload_config = self.cal.change_status(test=True, hardware_filter=False, command_default=True)
+            upload_config = self.cal.change_status(test=False, hardware_filter=False, command_default=True)
             cache_max_length = 5*channel_num*show_freq*self.data_show_second
             cache_min_length = channel_num*show_freq*self.data_show_second
             self.cache_data = np.array(cache_min_length*[0])
@@ -342,7 +342,16 @@ class MainCom(QObject, mp.Process):
                     data_show = self.cache_data[ -cache_min_length : ]
                     data_show = data_show.reshape(-1, channel_num)
                     data_show = data_show[iter_list, :].reshape(1, -1)
-                    data_show = (data_show[0] - 32768) / 50000
+                    data_show = data_show[0]
+
+                    rule_max = 1500
+                    rule_min = 10
+                    line = 0
+
+                    data_show[np.abs(data_show)>(line+rule_max)] = 0
+                    data_show[np.abs(data_show)<(line+rule_min)] = 0
+                    data_show = -np.abs(data_show -line) / 1000
+                    #data_show = self.tick_data(data_show)
                     try:
                         self.shared_data_graph[: num_show] = data_show[:]
                     except ValueError:
@@ -388,6 +397,7 @@ class MainCom(QObject, mp.Process):
             self.make_file_save()
         self.timer_tcp_ip.cancel()
         self.terminate()
+
 
 class ProcessMonitor(QObject, mp.Process):
     def __init__(self):

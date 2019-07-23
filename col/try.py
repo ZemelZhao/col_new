@@ -13,7 +13,7 @@ if __name__ == '__main__':
     log = Log(os.path.join(os.path.split(os.path.realpath(__file__))[0], 'log', 'log.out'))
     conf = ConfigProcess(config_ini_path, config_temp_path, log)
 
-    dp = Save(conf, log, 1, 0)
-    with open('temp.dat', 'rb') as f:
+    with open('test.dat', 'rb') as f:
         data = f.read()
-    dp.run(data)
+
+    print(list(data[:10000]))
