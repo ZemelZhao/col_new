@@ -85,24 +85,8 @@ class Cal(object):
         if not hardware_filter:
             self.func_make_filter(a, b, len(a), 0)
 
-        # Notch Filter Section
-        freq_notch = 50
-        gap = 2
-        start = freq_notch - gap
-        end = freq_notch + gap
-        [b, a] = sg.butter(2, [2 * start / freq_sample, 2 * end / freq_sample], 'bandstop')
-        res[0].append('filter1 A')
-        res[0].append('filter1 B')
-        self.cal.dict_data['filter1 A'][2] = len(a)
-        self.cal.dict_data['filter1 B'][2] = len(a)
-        res[1].append(self.cal.listdouble2listbyte(a))
-        res[1].append(self.cal.listdouble2listbyte(b))
-        if not hardware_filter:
-            self.func_make_filter(a, b, len(a), 1)
-
         # Bandpass Filter Section
         start = 5
-        #end = 124
         end = 100
         [b, a] = sg.butter(3, [2 * start / freq_sample, 2 * end / freq_sample], 'bandpass')
         res[0].append('filter1 A')
@@ -113,6 +97,22 @@ class Cal(object):
         res[1].append(self.cal.listdouble2listbyte(b))
         if not hardware_filter:
             self.func_make_filter(a, b, len(a), 2)
+
+        # Notch Filter Section
+        freq_notch = 50
+        gap = 2
+        start = freq_notch - gap
+        end = freq_notch + gap
+        [b, a] = sg.butter(2, [2 * start / freq_sample, 2 * end / freq_sample], 'bandstop')
+        res[0].append('filter2 A')
+        res[0].append('filter2 B')
+        self.cal.dict_data['filter2 A'][2] = len(a)
+        self.cal.dict_data['filter2 B'][2] = len(a)
+        res[1].append(self.cal.listdouble2listbyte(a))
+        res[1].append(self.cal.listdouble2listbyte(b))
+        if not hardware_filter:
+            self.func_make_filter(a, b, len(a), 1)
+
         self.log.info(self, 'Design Filter')
 
         if hardware_filter:
