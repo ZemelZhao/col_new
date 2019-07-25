@@ -277,6 +277,7 @@ class MainCom(QObject, mp.Process):
     def run(self):
         data_clear = 256*self.data_per_line*[0]
         show_freq = 250
+        graph_filter = True
         while True:
             time.sleep(0.001)
             self.not_change.value = True
@@ -286,7 +287,7 @@ class MainCom(QObject, mp.Process):
             freq_sample = int(dict_conf['Filter']['sampling_freq'])
             num_bag = self.cal_tcp_ip_bag(freq_sample, channel_num)
             address = (dict_conf['Socket']['tcp_address'], int(dict_conf['Socket']['tcp_port']))
-            upload_config = self.cal.change_status(test=False, hardware_filter=False, command_default=True)
+            upload_config = self.cal.change_status(test=not(graph_filter), hardware_filter=False, command_default=True)
             cache_max_length = 5*channel_num*show_freq*self.data_show_second
             cache_min_length = channel_num*show_freq*self.data_show_second
             self.cache_data = np.array(cache_min_length*[0])
@@ -344,14 +345,17 @@ class MainCom(QObject, mp.Process):
                     data_show = data_show[iter_list, :].reshape(1, -1)
                     data_show = data_show[0]
 
-                    rule_max = 1500
-                    rule_min = 10
-                    line = 0
+                    if graph_filter:
+                        rule_max = 200
+                        rule_min = 0
+                        line = 0
 
-                    data_show[np.abs(data_show)>(line+rule_max)] = 0
-                    data_show[np.abs(data_show)<(line+rule_min)] = 0
-                    data_show = -np.abs(data_show -line) / 1000
-                    #data_show = self.tick_data(data_show)
+                        data_show[np.abs(data_show)>(line+rule_max)] = 0
+                        data_show[np.abs(data_show)<(line+rule_min)] = 0
+                        data_show = -np.abs(data_show -line) / 100
+                    else:
+                        data_show = (data_show-32768)/2000
+                        #data_show = self.tick_data(data_show)
                     try:
                         self.shared_data_graph[: num_show] = data_show[:]
                     except ValueError:
@@ -444,6 +448,7 @@ if __name__ == '__main__': # Entry
     shared_status_change = mp.Value('b', False)
     shared_data_save = mp.Value('i', 0)
     shared_tcp_ip_status = mp.Value('i', 0)
+    shared_show_graph_filter = mp.Value('b', False)
     local_com_tcp_ip = mp.Value('b', False)
     time_cache = time.localtime(time.time())
     save_name = '%4d%02d%02d%02d%02d%02d' % (time_cache[0], time_cache[1], time_cache[2],
