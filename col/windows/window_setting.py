@@ -71,7 +71,6 @@ class WindowOption(QWidget):
         item.setTextAlignment(Qt.AlignCenter)
         self.list_option.addItem(item)
 
-
         """# Stack Window"""
         """# Page 0"""
         self.page0 = QWidget()
@@ -83,8 +82,56 @@ class WindowOption(QWidget):
 
         self.tabwidget_page0.addTab(self.tab0_page0, 'Info')
         self.tabwidget_page0.addTab(self.tab1_page0, 'Option')
+        self.page0tab0()
+        self.page0tab1()
+        self.page0global()
+        self.page1tab0()
+        self.page1tab1()
+        self.page1global()
 
-        """# Page0 Tab0"""
+    def keyReleaseEvent(self, event):
+        """DocString for pressKeyEwent"""
+        #@todo: to be defined.
+        if event.key() == Qt.Key_D:
+            self.list_option.setCurrentRow(0)
+            self.stack_window.setCurrentIndex(0)
+
+        if event.key() == Qt.Key_P:
+            self.list_option.setCurrentRow(1)
+            self.stack_window.setCurrentIndex(1)
+
+        if event.key() == Qt.Key_O:
+            if self.stack_window.currentIndex() == 1:
+                self.tabwidget_page1.setCurrentIndex(1)
+            else:
+                self.tabwidget_page0.setCurrentIndex(1)
+
+        if event.key() == Qt.Key_I:
+            if self.stack_window.currentIndex() == 1:
+                self.tabwidget_page1.setCurrentIndex(0)
+            else:
+                self.tabwidget_page0.setCurrentIndex(0)
+
+        if event.key() == Qt.Key_Return:
+            if self.stack_window.currentIndex() == 1:
+                self.pushbutton_ok_page1.click()
+            else:
+                self.pushbutton_ok_page0.click()
+
+        if event.key() == Qt.Key_R:
+            if self.stack_window.currentIndex() == 1:
+                self.pushbutton_re_page1.click()
+            else:
+                self.pushbutton_re_page0.click()
+
+        if event.key() == Qt.Key_Q:
+            self.close()
+
+
+    def page0tab0(self):
+        """DocString for page0tab0"""
+        #@todo: to be defined.
+
         font = QFont()
         font.setFamily('MonoxLight')
         font.setPointSize(12)
@@ -188,9 +235,15 @@ class WindowOption(QWidget):
 
         self.tab0_page0.setLayout(layout_tab0_page0_global)
 
-        """# Page0 Tab1"""
+    def page0tab1(self):
+        """DocString for page0tab1"""
+        #@todo: to be defined.
 
-        """# Page0 Global"""
+        pass
+
+    def page0global(self):
+        """DocString for page0global"""
+        #@todo: to be defined.
         self.pushbutton_ok_page0 = QPushButton('&Ok')
         self.pushbutton_re_page0 = QPushButton('&Reset')
         self.pushbutton_de_page0 = QPushButton('&Cancel')
@@ -208,7 +261,6 @@ class WindowOption(QWidget):
 
         self.stack_window.addWidget(self.page0)
 
-        """# Page 1"""
         self.page1 = QWidget()
 
         self.tabwidget_page1 = QTabWidget(self.page1)
@@ -219,7 +271,10 @@ class WindowOption(QWidget):
         self.tabwidget_page1.addTab(self.tab0_page1, 'Info')
         self.tabwidget_page1.addTab(self.tab1_page1, 'Option')
 
-        """# Page1 Tab0"""
+    def page1tab0(self):
+        """DocString for page1tab0"""
+        #@todo: to be defined.
+
         font = QFont()
         font.setFamily('MonoxLight')
         font.setPointSize(12)
@@ -320,7 +375,10 @@ class WindowOption(QWidget):
 
         self.tab0_page1.setLayout(layout_tab0_page1_global)
 
-        """# Page1 Tab1"""
+    def page1tab1(self):
+        """DocString for page1tab1"""
+        #@todo: to be defined.
+
         font = QFont()
         font.setFamily('MonoxLight')
         font.setPointSize(12)
@@ -519,8 +577,10 @@ class WindowOption(QWidget):
 
         self.tab1_page1.setLayout(layout_tab1_page1_global)
 
+    def page1global(self):
+        """DocString for page1global"""
+        #@todo: to be defined.
 
-        """# Page1 Global"""
         self.pushbutton_ok_page1 = QPushButton('&Ok')
         self.pushbutton_de_page1 = QPushButton('&Cancel')
         self.pushbutton_re_page1 = QPushButton('&Reset')
@@ -538,8 +598,6 @@ class WindowOption(QWidget):
         self.page1.setLayout(layout_page1_global)
 
         self.stack_window.addWidget(self.page1)
-
-
 
 
 if __name__ == '__main__':

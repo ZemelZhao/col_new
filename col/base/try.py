@@ -1,17 +1,7 @@
-from log import Log
+import numpy as np
+from PIL import Image
+import random
 
-class Fuck(object):
-    """ DocString for Fuck"""
+a = random.randint(0, 100)
 
-    def __init__(self, name):
-        #@todo: to be defined.
-        #:name: @todo.
-
-        self.name = name
-
-        log = Log(self.name)
-
-        log.error(self, 'fuck')
-
-if __name__ == '__main__':
-    fu = Fuck('log.out')
+print(a)

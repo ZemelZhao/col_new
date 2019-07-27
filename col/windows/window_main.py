@@ -18,10 +18,12 @@ try:
     from .window_setting import WindowOption
     from .window_graph_show_all import WindowGraphShow
     from .window_tinker import WindowAbout, WindowHelp
+    from .window_finger_test import WindowFingerTest
 except:
     from window_setting import WindowOption
     from window_graph_show_all import WindowGraphShow
     from window_tinker import WindowAbout, WindowHelp
+    from window_finger_test import WindowFingerTest
 
 
 import os
@@ -35,6 +37,10 @@ class WindowMain(QMainWindow):
         self.window_graph_show = WindowGraphShow()
         self.window_prog_about = WindowAbout()
         self.window_prog_help = WindowHelp()
+        self.window_finger_test = WindowFingerTest()
+        self.mdi = QMdiArea()
+        self.setCentralWidget(self.mdi)
+        self.sub_mdi = QMdiSubWindow()
         self.initUI()
 
     def keyPressEvent(self,event):
@@ -55,6 +61,10 @@ class WindowMain(QMainWindow):
                 self.graph_show()
         if event.key() == Qt.Key_O:
             self.main_option()
+        if event.key() == Qt.Key_Q:
+            self.close()
+        if event.key() == Qt.Key_F:
+            self.finger_test()
 
     def initUI(self):
         self.resize(1000, 900)
@@ -71,9 +81,11 @@ class WindowMain(QMainWindow):
         icon_start = os.path.join(self.path_resource, 'start')
         icon_help = os.path.join(self.path_resource, 'help')
         icon_info = os.path.join(self.path_resource, 'info')
+        icon_test = os.path.join(self.path_resource, 'test')
         icon_ana = os.path.join(self.path_resource, 'ana')
-        self.action_option = self.create_action('&Option', self.main_option, 'Ctrl + O', icon_option, None)
-        self.action_graph = self.create_action('&Graph', self.graph_show, 'Ctrl + G', icon_graph, None)
+        self.action_option = self.create_action('&Option', self.main_option, 'O', icon_option, None)
+        self.action_graph = self.create_action('&Graph', self.graph_show, 'G', icon_graph, None)
+        self.action_test = self.create_action('&Test', self.finger_test, 'T', icon_test, None)
         self.action_about = self.create_action('About', self.prog_about, None, icon_info, None)
         self.action_help = self.create_action('Help', self.prog_help, None, icon_help, None)
         self.action_start = self.create_action('Start/Restart', self.start_restart, None, icon_start, None)
@@ -96,6 +108,7 @@ class WindowMain(QMainWindow):
         self.toolbar_main_option = self.addToolBar('Option')
         self.toolbar_main_option.addAction(self.action_option)
         self.toolbar_main_option.addAction(self.action_graph)
+        self.toolbar_main_option.addAction(self.action_test)
 
         self.toolbar_main_control = self.addToolBar('Control')
         self.toolbar_main_control.addAction(self.action_start)
@@ -114,13 +127,20 @@ class WindowMain(QMainWindow):
         self.window_main_option.show()
 
     def graph_show(self):
-        self.mdi = QMdiArea()
-        self.setCentralWidget(self.mdi)
         self.sub_mdi = QMdiSubWindow()
         self.sub_mdi.setWidget(self.window_graph_show)
         self.sub_mdi.setFixedSize(1000, 800)
         self.mdi.addSubWindow(self.sub_mdi)
         self.window_graph_show.show()
+
+    def finger_test(self):
+        """DocString for finger_test"""
+        #@todo: to be defined.
+        self.sub_mdi = QMdiSubWindow()
+        self.sub_mdi.setWidget(self.window_finger_test)
+        self.sub_mdi.setFixedSize(700, 815)
+        self.mdi.addSubWindow(self.sub_mdi)
+        self.window_finger_test.show()
 
     def prog_about(self):
         self.window_prog_about.show()

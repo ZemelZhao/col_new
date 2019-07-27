@@ -11,6 +11,7 @@ try:
     from logic.window_graph_show_all_logic import WindowGraphShowLogic
     from logic.window_setting_logic import WindowOptionLogic
     from logic.window_tinker_logic import WindowHelpLogic, WindowAboutLogic
+    from logic.window_finger_test_logic import WindowFingerTestLogic
     from base.log import Log
     from base.conf import ConfigProcess
     from base.timer import RTimer
@@ -89,14 +90,31 @@ class MainWindow(WindowMain):
                 self.close()
             else:
                 try:
-                    if not self.window_graph_show.isClosed():
-                        self.window_graph_show.close()
+                    judge = False
+                    try:
+                        if not self.window_graph_show.isClosed():
+                            self.window_graph_show.close()
+                            judge = True
+                    except:
+                        pass
+                    try:
+                        if not self.window_finger_test.isClosed():
+                            self.window_finger_test.close()
+                            judge = True
+                    except:
+                        pass
+                    if judge:
                         self.mdi.close()
                 except:
-                    print('fuck')
+                    print('fuckhere')
         if event.key() == Qt.Key_A:
             self.start_analysis()
-
+        if event.key() == Qt.Key_F:
+            try:
+                if self.window_finger_test.isClosed():
+                    self.finger_test()
+            except:
+                self.finger_test()
 
     def initial_setting(self):
         self.slot_refresh_config()
@@ -138,6 +156,28 @@ class MainWindow(WindowMain):
                 self.window_graph_show.signal_trigger.connect(self.slot_graph_emit)
                 #self.window_graph_show.signal_trigger.connect(self.)
                 self.window_graph_show.show()
+
+    def finger_test(self):
+        """DocString for finger_test"""
+        #@todo: to be defined.
+        try:
+            if self.window_finger_test.isClosed():
+                judge = True
+            else:
+                judge = False
+        except:
+            judge = True
+        finally:
+            if judge:
+                self.window_finger_test = WindowFingerTestLogic(self.conf, self.log)
+                self.window_finger_test.startTimer(0)
+                sub = QMdiSubWindow()
+                sub.setWidget(self.window_finger_test)
+                self.mdi = QMdiArea()
+                self.setCentralWidget(self.mdi)
+                self.mdi.addSubWindow(sub)
+                self.signal_start_refresh.connect(self.window_finger_test.update_lcd)
+                self.window_finger_test.show()
 
     def prog_about(self):
         self.window_prog_about = WindowAboutLogic(self.log, self)
@@ -401,7 +441,6 @@ class MainCom(QObject, mp.Process):
             self.make_file_save()
         self.timer_tcp_ip.cancel()
         self.terminate()
-
 
 class ProcessMonitor(QObject, mp.Process):
     def __init__(self):

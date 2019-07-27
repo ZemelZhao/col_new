@@ -277,6 +277,7 @@ int Cal::run(uchr* data, double* resData, int length){
 	return num;
 	// --- }}}
 }
+//---}}}
 
 extern "C"{
 	Cal cal;

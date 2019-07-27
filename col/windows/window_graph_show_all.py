@@ -32,6 +32,17 @@ class WindowGraphShow(QWidget):
         pg.setConfigOption('background', 'w')
         pg.setConfigOption('foreground', 'k')
 
+        lcd_number_style = 'QLCDNumber{\
+                            min-width: 150px;\
+                            max-width: 150px;\
+                            min-height: 80px;\
+                            max-height: 80px;\
+                            }'
+        pushbutton_style = 'QPushButton{\
+                            min-width: 150px;\
+                            min-height: 80px;\
+                            }'
+
         """# layout_scroll"""
         layout_scroll = QHBoxLayout()
         self.scroll_area_widget = QWidget()
@@ -50,33 +61,17 @@ class WindowGraphShow(QWidget):
         self.lcdnumber_countdown.setDigitCount(4)
         self.lcdnumber_countdown.setMode(QLCDNumber.Dec)
         self.lcdnumber_countdown.setSegmentStyle(QLCDNumber.Flat)
-        self.lcdnumber_countdown.setStyleSheet("QLCDNumber{\
-                                               min-width: 150px;\
-                                               max-width: 150px;\
-                                               min-height: 80px;\
-                                               max-height: 80px;\
-                                               }")
+        self.lcdnumber_countdown.setStyleSheet(lcd_number_style)
         self.lcdnumber_countdown_num = QLCDNumber()
         self.lcdnumber_countdown_num.setDigitCount(4)
         self.lcdnumber_countdown_num.setMode(QLCDNumber.Dec)
         self.lcdnumber_countdown_num.setSegmentStyle(QLCDNumber.Flat)
-        self.lcdnumber_countdown_num.setStyleSheet("QLCDNumber{\
-                                               min-width: 150px;\
-                                               max-width: 150px;\
-                                               min-height: 80px;\
-                                               max-height: 80px;\
-                                               }")
+        self.lcdnumber_countdown_num.setStyleSheet(lcd_number_style)
         self.pushbutton_graph_save = QPushButton("Save Picture")
-        self.pushbutton_graph_save.setStyleSheet("QPushButton{\
-                                                 min-width: 150px;\
-                                                 min-height: 60px;\
-                                                 }")
+        self.pushbutton_graph_save.setStyleSheet(pushbutton_style)
 
         self.pushbutton_data_save = QPushButton("Save Data")
-        self.pushbutton_data_save.setStyleSheet("QPushButton{\
-                                                 min-width: 150px;\
-                                                 min-height: 60px;\
-                                                 }")
+        self.pushbutton_data_save.setStyleSheet(pushbutton_style)
 
         widget = QWidget()
         widget.setMinimumSize(20, 300)
