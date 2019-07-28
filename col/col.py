@@ -134,6 +134,11 @@ class MainWindow(WindowMain):
 
     def graph_show(self):
         try:
+            if not self.window_finger_test.isClosed():
+                self.window_finger_test.close()
+        except:
+            pass
+        try:
             if self.window_graph_show.isClosed():
                 judge = True
             else:
@@ -160,6 +165,11 @@ class MainWindow(WindowMain):
     def finger_test(self):
         """DocString for finger_test"""
         #@todo: to be defined.
+        try:
+            if not self.window_graph_show.isClosed():
+                self.window_graph_show.close()
+        except:
+            pass
         try:
             if self.window_finger_test.isClosed():
                 judge = True
@@ -414,8 +424,9 @@ class MainCom(QObject, mp.Process):
             self.temp_file.seek(0)
             data = self.temp_file.read()
             self.save_all = Save(self.conf, self.log, self.path_dir_save_name, self.path_dir_save_name,
-                                save_loc=1, filt=0, save_type=save_type)
+                                save_loc=1, filt=1, save_type=save_type)
             self.save_all.run(data)
+            self.log.info(self, 'Save Done')
         except:
             self.log.warning(self, 'Save Failed')
 

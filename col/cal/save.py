@@ -36,13 +36,65 @@ class FileSave(object):
         #:file_path_data: @todo.
 		#:file_path_save: @todo.
 		#:filter: @todo.
+        data_filt = data.copy()
+        dict_res = self.conf.config_read()
+        channel_num = int(dict_res['Data']['channel_num'])
+        sample_freq = int(dict_res['Filter']['sampling_freq'])
+        filter_notch_able = int(dict_res['Filter']['filter_notch_able'])
+        filter_band_able = int(dict_res['Filter']['filter_band_able'])
+        filter_notch = int(dict_res['Filter']['filter_notch'])
+        filter_band0= int(dict_res['Filter']['filter_band_high'])
+        filter_band1 = int(dict_res['Filter']['filter_band_low'])
+        shape_data = data.shape
+        list_filter_a = []
+        list_filter_b = []
+
+        if shape_data[1] - 2 != channel_num:
+            self.log.warning(self, 'Channel Num Unfitted')
+            return False
+
+        if filter_notch_able:
+            if filter_notch == 50:
+                a = [0 for i in range(sample_freq // filter_notch + 1)]
+                b = [0 for i in range(sample_freq // filter_notch + 1)]
+                a[0] = 1
+                a[-1] = -0.965081805687581
+                b[0] = 0.98254090284379
+                b[-1] = -0.98254090284379
+                list_filter_a.append(a)
+                list_filter_b.append(b)
+            else:
+                [b, a] = sg.butter(5, [2*(filter_notch-2)/sample_freq,
+                                       2*(filter_notch+2)/sample_freq], 'bandpass')
+                list_filter_a.append(a)
+                list_filter_b.append(b)
+
+        if filter_band_able:
+            if 2*filter_band1 > sample_freq:
+                filter_band1 = sample_freq / 2 - 10
+            if filter_band1 < filter_band0:
+                filter_band0 = 5
+            [b, a] = sg.butter(3, [2*filter_band0/sample_freq,
+                                   2*filter_band1/sample_freq], 'bandpass')
+            list_filter_a.append(a)
+            list_filter_b.append(b)
+
+        for i in range(channel_num):
+            for j in range(len(list_filter_a)):
+                data_filt[:, i] = sg.filtfilt(list_filter_b[j],
+                                              list_filter_a[j], data_filt[:, i])
+
         try:
             if self.save_type:
                 path_file_save = '%s.npy' % self.save_name
+                path_file_save_filt = '%sf.npy' % self.save_name
                 np.save(path_file_save, data)
+                np.save(path_file_save_filt, data_filt)
             else:
                 path_file_save = '%s.csv' % self.save_name
+                path_file_save_filt = '%sf.csv' % self.save_name
                 np.savetxt(path_file_save, data, delimiter=',')
+                np.savetxt(path_file_save_filt, data_filt, delimiter=',')
         except:
             self.log.warning(self, 'File Save Failed')
 
@@ -93,7 +145,6 @@ class PicSave(object):
         except FileNotFoundError:
             os.mkdir(self.dir_pic)
             plt.savefig(path_pic, format='svg')
-
 
 class DataProcess(object):
     """ DocString for Save"""
@@ -245,7 +296,6 @@ class Save(object):
         #@todo: to be defined.
         #:conf: @todo.
 		#:log: @todo.
-
         self.conf = conf
         self.log = log
         self.data_process = DataProcess(self.conf, self.log, save_loc, filt)

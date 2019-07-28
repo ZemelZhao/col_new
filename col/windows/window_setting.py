@@ -238,8 +238,15 @@ class WindowOption(QWidget):
     def page0tab1(self):
         """DocString for page0tab1"""
         #@todo: to be defined.
+        font = QFont()
+        font.setFamily('MonoxLight')
+        font.setPointSize(12)
 
-        pass
+        self.radio_button_test1 = QRadioButton('TEST1')
+        self.radio_button_test2 = QRadioButton('TEST2')
+
+
+
 
     def page0global(self):
         """DocString for page0global"""
