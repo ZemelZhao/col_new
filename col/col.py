@@ -58,6 +58,8 @@ class MainWindow(WindowMain):
         self.timer_stat_monit.start(1000)
         self.start = False
 
+        self.judge_collect_stat = True
+
         self.timer_tcp_monit = QTimer()
         self.timer_tcp_monit.timeout.connect(self.tcp_ip_monit)
         self.timer_tcp_monit.start(1000)
@@ -133,6 +135,10 @@ class MainWindow(WindowMain):
 
 
     def graph_show(self):
+        dict_conf = self.conf.config_read()
+        test_judge = int(dict_conf['Test']['test'])
+        if test_judge:
+            return False
         try:
             if not self.window_finger_test.isClosed():
                 self.window_finger_test.close()
@@ -165,6 +171,10 @@ class MainWindow(WindowMain):
     def finger_test(self):
         """DocString for finger_test"""
         #@todo: to be defined.
+        dict_conf = self.conf.config_read()
+        judge_test = int(dict_conf['Test']['test'])
+        if not judge_test:
+            return False
         try:
             if not self.window_graph_show.isClosed():
                 self.window_graph_show.close()
@@ -180,7 +190,7 @@ class MainWindow(WindowMain):
         finally:
             if judge:
                 self.window_finger_test = WindowFingerTestLogic(self.conf, self.log)
-                self.window_finger_test.startTimer(1)
+                self.window_finger_test.startTimer(0)
                 sub = QMdiSubWindow()
                 sub.setWidget(self.window_finger_test)
                 self.mdi = QMdiArea()

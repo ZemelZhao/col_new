@@ -15,7 +15,7 @@ class WindowAbout(QWidget):
     def __init__(self):
         super(WindowAbout, self).__init__()
         myFolder = os.path.split(os.path.realpath(__file__))[0]
-        self.loc_logo = os.path.join(myFolder, os.path.pardir, 'resource', 'logo.png')
+        self.loc_logo = os.path.join(myFolder, os.path.pardir, 'resource', 'pic', 'logo.png')
         self.initUI()
 
     def initUI(self):

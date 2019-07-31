@@ -179,6 +179,8 @@ class WindowOptionLogic(WindowOption):
         self.dict_conf['Socket']['tcp_address'] = self.lineedit_tcp_address_page0.text()
         self.dict_conf['Socket']['tcp_port'] = self.lineedit_tcp_port_page0.text()
 
+        self.dict_conf['Test']['test'] = 1
+
         self.conf.config_write(self.dict_conf)
         self.log.debug(self, 'Close Window Saved')
         self.close()
@@ -203,6 +205,7 @@ class WindowOptionLogic(WindowOption):
 
         self.dict_conf['Socket']['tcp_address'] = self.lineedit_tcp_address_page1.text()
         self.dict_conf['Socket']['tcp_port'] = self.lineedit_tcp_port_page1.text()
+        self.dict_conf['Test']['test'] = 0
 
         self.conf.config_write(self.dict_conf)
         self.log.debug(self, 'Close Window Saved')
