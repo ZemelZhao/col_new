@@ -180,7 +180,7 @@ class MainWindow(WindowMain):
         finally:
             if judge:
                 self.window_finger_test = WindowFingerTestLogic(self.conf, self.log)
-                self.window_finger_test.startTimer(0)
+                self.window_finger_test.startTimer(1)
                 sub = QMdiSubWindow()
                 sub.setWidget(self.window_finger_test)
                 self.mdi = QMdiArea()
@@ -214,6 +214,7 @@ class MainWindow(WindowMain):
         self.start = True
         self.slot_status_bar_changed('Start Record Data')
         self.window_graph_show.startTimer(1)
+        self.window_finger_test.startTimer(1)
         self.signal_start_refresh.emit(True)
         dict_config = self.conf.config_read()
         bool_auto_start = int(dict_config['Data']['auto_res_able'])
@@ -327,7 +328,7 @@ class MainCom(QObject, mp.Process):
     def run(self):
         data_clear = 256*self.data_per_line*[0]
         show_freq = 250
-        graph_filter = True
+        graph_filter = False
         while True:
             time.sleep(0.001)
             self.not_change.value = True

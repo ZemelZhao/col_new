@@ -110,6 +110,22 @@ class WindowOptionLogic(WindowOption):
         self.radiobutton_restart_auto.toggled.connect(self.action_auto_press_change)
         self.radiobutton_users_gender_secret_page1.setChecked(True)
 
+        self.dir_info_test = os.path.join(os.path.split(os.path.realpath(__file__))[0], os.path.pardir, 'resource', 'text')
+        self.list_file_info_test = [os.path.join(self.dir_info_test, 'text_info1.txt'),
+                                    os.path.join(self.dir_info_test, 'text_info2.txt')]
+        self.list_text_info = []
+        for i in range(len(self.list_file_info_test)):
+            with open(self.list_file_info_test[i], 'r') as f:
+                self.list_text_info.append(f.read())
+
+        self.radiobutton_test1.setChecked(True)
+        self.radiobutton_test1.toggled.connect(lambda:self.action_radiobutton_test(self.radiobutton_test1))
+        self.radiobutton_test2.toggled.connect(lambda:self.action_radiobutton_test(self.radiobutton_test2))
+        if self.radiobutton_test1.isChecked():
+            self.action_radiobutton_test(self.radiobutton_test1)
+        else:
+            self.action_radiobutton_test(self.radiobutton_test2)
+
         self.display_initial()
 
     def config_ini_read(self):
@@ -135,8 +151,10 @@ class WindowOptionLogic(WindowOption):
         self.radiobutton_restart_press.setChecked(not int(dict_data['auto_res_able']))
         self.combobox_filetype_save.setCurrentIndex(int(dict_data['filetype_save']))
 
-        self.lineedit_tcp_address.setText(dict_sock['tcp_address'])
-        self.lineedit_tcp_port.setText(dict_sock['tcp_port'])
+        self.lineedit_tcp_address_page0.setText(dict_sock['tcp_address'])
+        self.lineedit_tcp_port_page0.setText(dict_sock['tcp_port'])
+        self.lineedit_tcp_address_page1.setText(dict_sock['tcp_address'])
+        self.lineedit_tcp_port_page1.setText(dict_sock['tcp_port'])
 
         self.combobox_notch_filter.setEnabled(self.checkbox_notch_filter.isChecked())
         self.combobox_bandpass_high.setEnabled(self.checkbox_bandpass_filter.isChecked())
@@ -144,6 +162,25 @@ class WindowOptionLogic(WindowOption):
         self.spinbox_restart_auto.setEnabled(self.radiobutton_restart_auto.isChecked())
 
     def action_pushbutton_ok_page0(self):
+        self.dict_conf['Filter']['filter_notch_able'] = 1
+        self.dict_conf['Filter']['filter_band_able'] = 1
+        self.dict_conf['Filter']['filter_notch'] = 50
+        self.dict_conf['Filter']['filter_band_high'] = 20
+        self.dict_conf['Filter']['filter_band_low'] = 450
+        self.dict_conf['Filter']['sampling_freq'] = 1000
+
+        self.dict_conf['Data']['channel_num'] = 64
+        self.dict_conf['Data']['set_number'] = 5
+        self.dict_conf['Data']['set_time'] = 15
+        self.dict_conf['Data']['auto_res_able'] = 0
+        self.dict_conf['Data']['auto_res_time'] = 0
+        self.dict_conf['Data']['filetype_save'] = 1
+
+        self.dict_conf['Socket']['tcp_address'] = self.lineedit_tcp_address_page0.text()
+        self.dict_conf['Socket']['tcp_port'] = self.lineedit_tcp_port_page0.text()
+
+        self.conf.config_write(self.dict_conf)
+        self.log.debug(self, 'Close Window Saved')
         self.close()
 
     def action_pushbutton_de_page0(self):
@@ -164,8 +201,8 @@ class WindowOptionLogic(WindowOption):
         self.dict_conf['Data']['auto_res_time'] = int(self.spinbox_restart_auto.value())
         self.dict_conf['Data']['filetype_save'] = int(self.combobox_filetype_save.currentIndex())
 
-        self.dict_conf['Socket']['tcp_address'] = self.lineedit_tcp_address.text()
-        self.dict_conf['Socket']['tcp_port'] = self.lineedit_tcp_port.text()
+        self.dict_conf['Socket']['tcp_address'] = self.lineedit_tcp_address_page1.text()
+        self.dict_conf['Socket']['tcp_port'] = self.lineedit_tcp_port_page1.text()
 
         self.conf.config_write(self.dict_conf)
         self.log.debug(self, 'Close Window Saved')
@@ -193,6 +230,17 @@ class WindowOptionLogic(WindowOption):
 
     def action_auto_press_change(self):
         self.spinbox_restart_auto.setEnabled(self.radiobutton_restart_auto.isChecked())
+
+    def action_radiobutton_test(self, radiobutton_test):
+        """DocString for action_radiobutton_test"""
+        #@todo: to be defined.
+		#:radiobutton_test: @todo.
+        if radiobutton_test.text() == 'TEST1':
+            if radiobutton_test.isChecked() == True:
+                self.text_edit_info.setPlainText(self.list_text_info[0])
+        if radiobutton_test.text() == 'TEST2':
+            if radiobutton_test.isChecked() == True:
+                self.text_edit_info.setPlainText(self.list_text_info[1])
 
 
 if __name__ == '__main__':

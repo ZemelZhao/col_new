@@ -71,20 +71,11 @@ class WindowOption(QWidget):
         item.setTextAlignment(Qt.AlignCenter)
         self.list_option.addItem(item)
 
-        """# Stack Window"""
-        """# Page 0"""
-        self.page0 = QWidget()
-
-        self.tabwidget_page0 = QTabWidget(self.page0)
-
-        self.tab0_page0 = QWidget(self.page0)
-        self.tab1_page0 = QWidget(self.page0)
-
-        self.tabwidget_page0.addTab(self.tab0_page0, 'Info')
-        self.tabwidget_page0.addTab(self.tab1_page0, 'Option')
+        self.page0_pre()
         self.page0tab0()
         self.page0tab1()
         self.page0global()
+        self.page1_pre()
         self.page1tab0()
         self.page1tab1()
         self.page1global()
@@ -127,6 +118,22 @@ class WindowOption(QWidget):
         if event.key() == Qt.Key_Q:
             self.close()
 
+    def page0_pre(self):
+        """DocString for page0"""
+        #@todo: to be defined.
+        font = QFont()
+        font.setFamily('MonoxLight')
+        font.setPointSize(12)
+
+        self.page0 = QWidget()
+
+        self.tabwidget_page0 = QTabWidget(self.page0)
+
+        self.tab0_page0 = QWidget(self.page0)
+        self.tab1_page0 = QWidget(self.page0)
+
+        self.tabwidget_page0.addTab(self.tab0_page0, 'Info')
+        self.tabwidget_page0.addTab(self.tab1_page0, 'Option')
 
     def page0tab0(self):
         """DocString for page0tab0"""
@@ -242,10 +249,65 @@ class WindowOption(QWidget):
         font.setFamily('MonoxLight')
         font.setPointSize(12)
 
-        self.radio_button_test1 = QRadioButton('TEST1')
-        self.radio_button_test2 = QRadioButton('TEST2')
+        layout_tab1_page0_global = QVBoxLayout()
+        groupbox_text_style = 'QGroupBox{\
+                               max-height: 60px;\
+                               }'
+        groupbox_info_style = 'QGroupBox{\
+                               min-height: 120px;\
+                               font-family: MonoxRegular;\
+                               font-size: 20px;\
+                               }'
 
+        groupbox_radio_button = QGroupBox('Option')
+        layout_groupbox_radio_button = QHBoxLayout()
+        self.radiobutton_test1 = QRadioButton('TEST1')
+        self.radiobutton_test2 = QRadioButton('TEST2')
 
+        layout_groupbox_radio_button.addWidget(self.radiobutton_test1)
+        layout_groupbox_radio_button.addWidget(self.radiobutton_test2)
+        groupbox_radio_button.setLayout(layout_groupbox_radio_button)
+        groupbox_radio_button.setStyleSheet(groupbox_text_style)
+
+        layout_info_text = QVBoxLayout()
+        groupbox_text_info = QGroupBox('Info')
+        self.text_edit_info = QTextEdit()
+        groupbox_text_info.setStyleSheet(groupbox_info_style)
+        groupbox_text_info.setFont(font)
+        layout_info_text.addWidget(groupbox_text_info)
+
+        layout_group_text_info = QHBoxLayout(groupbox_text_info)
+        layout_group_text_info.addWidget(self.text_edit_info)
+
+        groupbox_tcpip_page1 = QGroupBox('TCP/IP')
+        groupbox_tcpip_page1.setStyleSheet(self.style_groupbox_font)
+
+        label_tcp_address = QLabel('TCP Address')
+        label_tcp_address.setFont(font)
+
+        label_tcp_port = QLabel('TCP Port')
+        label_tcp_port.setFont(font)
+        self.lineedit_tcp_address_page0 = QLineEdit()
+        self.lineedit_tcp_port_page0 = QLineEdit()
+        self.lineedit_tcp_address_page0.setFont(font)
+        self.lineedit_tcp_port_page0.setFont(font)
+
+        layout_tcpip_page1_global = QVBoxLayout()
+        layout_tcpip_data = QHBoxLayout()
+        layout_tcpip_button_reset = QHBoxLayout()
+
+        layout_tcpip_data.addWidget(label_tcp_address)
+        layout_tcpip_data.addWidget(self.lineedit_tcp_address_page0)
+        layout_tcpip_data.addWidget(label_tcp_port)
+        layout_tcpip_data.addWidget(self.lineedit_tcp_port_page0)
+
+        layout_tcpip_page1_global.addLayout(layout_tcpip_data)
+
+        layout_tab1_page0_global.addWidget(groupbox_radio_button)
+        layout_tab1_page0_global.addLayout(layout_info_text)
+        layout_tab1_page0_global.addLayout(layout_tcpip_page1_global)
+
+        self.tab1_page0.setLayout(layout_tab1_page0_global)
 
 
     def page0global(self):
@@ -268,6 +330,7 @@ class WindowOption(QWidget):
 
         self.stack_window.addWidget(self.page0)
 
+    def page1_pre(self):
         self.page1 = QWidget()
 
         self.tabwidget_page1 = QTabWidget(self.page1)
@@ -441,12 +504,6 @@ class WindowOption(QWidget):
         self.spinbox_set_num = QSpinBox()
         self.spinbox_set_time = QSpinBox()
 
-        self.lineedit_tcp_address = QLineEdit()
-        self.lineedit_tcp_address.setFont(font)
-
-        self.lineedit_tcp_port = QLineEdit()
-        self.lineedit_tcp_port.setFont(font)
-
         self.combobox_bandpass_high = QComboBox()
         self.combobox_bandpass_high.addItem('1')
         self.combobox_bandpass_high.addItem('5')
@@ -477,6 +534,12 @@ class WindowOption(QWidget):
         self.combobox_channel_num.addItem('64')
         self.combobox_channel_num.addItem('128')
         self.combobox_channel_num.addItem('192')
+
+        self.lineedit_tcp_address_page1 = QLineEdit()
+        self.lineedit_tcp_address_page1.setFont(font)
+
+        self.lineedit_tcp_port_page1 = QLineEdit()
+        self.lineedit_tcp_port_page1.setFont(font)
 
         self.checkbox_notch_filter = QCheckBox('Notch Filter')
         self.checkbox_bandpass_filter = QCheckBox('Bandpass Filter')
@@ -561,9 +624,9 @@ class WindowOption(QWidget):
         layout_tcpip_button_reset = QHBoxLayout()
 
         layout_tcpip_data.addWidget(label_tcp_address)
-        layout_tcpip_data.addWidget(self.lineedit_tcp_address)
+        layout_tcpip_data.addWidget(self.lineedit_tcp_address_page1)
         layout_tcpip_data.addWidget(label_tcp_port)
-        layout_tcpip_data.addWidget(self.lineedit_tcp_port)
+        layout_tcpip_data.addWidget(self.lineedit_tcp_port_page1)
 
         layout_tcpip_page1_global.addLayout(layout_tcpip_data)
 

@@ -25,7 +25,6 @@ class WindowFingerTestLogic(WindowFingerTest):
     """ DocString for WindowFingerTestLogic"""
     signal_set_done = pyqtSignal(bool)
     signal_trigger = pyqtSignal(int)
-
     def __init__(self, conf, log):
         #@todo: to be defined.
         self.gui_val = GlobalConstValue()
@@ -52,7 +51,7 @@ class WindowFingerTestLogic(WindowFingerTest):
         #@todo: to be defined.
         super(WindowFingerTestLogic, self).initUI()
         self.update_config()
-        self.pushbutton_start.clicked.connect(self.start)
+        self.pushbutton_start.clicked.connect(self.action_start)
         self.pushbutton_change_hand.clicked.connect(self.change_hand)
         self.change_hand()
 
@@ -147,7 +146,7 @@ class WindowFingerTestLogic(WindowFingerTest):
         self.judge_close = True
         self.log.debug(self, 'Close Window')
 
-    def start(self):
+    def action_start(self):
         """DocString for runstart"""
         self.startTimer(1)
 
@@ -167,8 +166,6 @@ class WindowFingerTestLogic(WindowFingerTest):
         else:
              for i in range(len(self.list_finger_value)):
                 self.list_test_widget[i].setValue(self.list_finger_value[i])
-
-
 
     def change_hand(self):
         """DocString for change_hand"""

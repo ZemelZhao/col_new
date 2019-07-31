@@ -70,7 +70,7 @@ class WindowMain(QMainWindow):
         self.resize(1000, 900)
         self.setWindowTitle('Main')
         myFolder = os.path.split(os.path.realpath(__file__))[0]
-        self.path_resource = os.path.join(myFolder, os.pardir, 'resource')
+        self.path_resource = os.path.join(myFolder, os.pardir, 'resource', 'pic')
 
         """# Action"""
         icon_filesave = os.path.join(self.path_resource, 'filesave')
