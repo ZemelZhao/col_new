@@ -128,6 +128,7 @@ class WindowFingerTestLogic(WindowFingerTest):
                 self.lcd_time_show = int(time_pass)
                 self.lcd_num_show = 0
         if self.lcd_num_show != self.lcd_num_show_record:
+            self.change_value_auto()
             self.signal_trigger.emit(1)
             self.lcd_num_show_record = self.lcd_num_show
         if self.lcd_num_show == 0:
@@ -166,6 +167,22 @@ class WindowFingerTestLogic(WindowFingerTest):
         else:
              for i in range(len(self.list_finger_value)):
                 self.list_test_widget[i].setValue(self.list_finger_value[i])
+
+    def change_value_auto(self):
+        """DocString for chang_"""
+        #@todo: to be defined.
+        if sum(self.list_finger_value) % 100:
+            self.change_value([100, 0, 0, 0, 0])
+        else:
+            print(self.list_finger_value)
+            if self.list_finger_value[0] == 100:
+                self.change_value([0, 100, 0, 0, 0])
+            elif self.list_finger_value[1] == 100:
+                self.change_value([0, 0, 100, 0, 0])
+            elif self.list_finger_value[2] == 100:
+                self.change_value([0, 0, 0, 100, 0])
+            elif self.list_finger_value[3] == 100:
+                self.change_value([0, 0, 0, 100, 100])
 
     def change_hand(self):
         """DocString for change_hand"""

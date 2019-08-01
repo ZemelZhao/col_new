@@ -1,19 +1,7 @@
 import numpy as np
 import os
-import matplotlib.pyplot as plt
-from base.log import Log
-from base.conf import ConfigProcess
-from cal.save import Save
 
+data = np.load('save/20190731124145f.npy')
+a = data[data[:, -1] != 0]
+print(a)
 
-
-if __name__ == '__main__':
-    config_ini_path = os.path.join(os.path.split(os.path.realpath(__file__))[0], 'config', 'config.ini')
-    config_temp_path = os.path.join(os.path.split(os.path.realpath(__file__))[0], '.temp', 'config.ini')
-    log = Log(os.path.join(os.path.split(os.path.realpath(__file__))[0], 'log', 'log.out'))
-    conf = ConfigProcess(config_ini_path, config_temp_path, log)
-
-    with open('test.dat', 'rb') as f:
-        data = f.read()
-
-    print(list(data[:10000]))
